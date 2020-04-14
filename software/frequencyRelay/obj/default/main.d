@@ -21,7 +21,8 @@ obj/default/main.o: main.c main.h ../frequencyRelay_bsp/system.h \
   freertos/projdefs.h freertos/portable.h \
   freertos/deprecated_definitions.h freertos/portmacro.h \
   ../frequencyRelay_bsp//HAL/inc/sys/alt_irq.h freertos/mpu_wrappers.h \
-  freertos/task.h freertos/list.h freertos/queue.h
+  freertos/semphr.h freertos/queue.h freertos/task.h freertos/list.h \
+  freertos/queue.h
 
 main.h:
 
@@ -84,6 +85,10 @@ freertos/portmacro.h:
 ../frequencyRelay_bsp//HAL/inc/sys/alt_irq.h:
 
 freertos/mpu_wrappers.h:
+
+freertos/semphr.h:
+
+freertos/queue.h:
 
 freertos/task.h:
 

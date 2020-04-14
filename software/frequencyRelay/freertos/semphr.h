@@ -130,10 +130,10 @@ typedef QueueHandle_t SemaphoreHandle_t;
  */
 #define vSemaphoreCreateBinary( xSemaphore )																							\
 	{																																	\
-		( xSemaphore ) = xQueueGenericCreate( ( UBaseType_t ) 1, semSEMAPHORE_QUEUE_ITEM_LENGTH, queueQUEUE_TYPE_BINARY_SEMAPHORE );	\
-		if( ( xSemaphore ) != NULL )																									\
+		( modeMutex ) = xQueueGenericCreate( ( UBaseType_t ) 1, semSEMAPHORE_QUEUE_ITEM_LENGTH, queueQUEUE_TYPE_BINARY_SEMAPHORE );	\
+		if( ( modeMutex ) != NULL )																									\
 		{																																\
-			( void ) xSemaphoreGive( ( xSemaphore ) );																					\
+			( void ) xSemaphoreGive( ( modeMutex ) );																					\
 		}																																\
 	}
 

@@ -7,6 +7,7 @@
         "freertos.h": "c",
         "queue.h": "c",
         "task.h": "c",
-        "altera_up_avalon_ps2.h": "c"
+        "altera_up_avalon_ps2.h": "c",
+        "cstdint": "cpp"
     }
 }
