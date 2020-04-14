@@ -107,3 +107,19 @@ java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1586838204020
 java.runtime.version,sysinfo,,,"1.6.0_23-b05",1586838204020
 java.specification.name,sysinfo,,,"Java Platform API Specification",1586838204020
 java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1586838204020
+java.specification.version,sysinfo,,,"1.6",1586838204020
+java.vendor,sysinfo,,,"Sun Microsystems Inc.",1586838204020
+java.version,sysinfo,,,"1.6.0_23",1586838204020
+java.vm.info,sysinfo,,,"mixed mode",1586838204020
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1586838204020
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1586838204020
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1586838204020
+java.vm.specification.version,sysinfo,,,"1.0",1586838204020
+java.vm.vendor,sysinfo,,,"Sun Microsystems Inc.",1586838204020
+java.vm.version,sysinfo,,,"19.0-b09",1586838204020
+started,bundle,com.altera.systemconsole,13.0.0.156,"com.altera.systemconsole",1586838204021
+started,bundle,com.altera.utilities,13.0.0.156,"com.altera.utilities",1586838204063
+started,bundle,com.altera.systemconsole.designs.plugin,13.0.0.156,"com.altera.systemconsole.designs.plugin",1586838204096
+started,bundle,org.eclipse.epp.usagedata.ui,1.3.1.R201106061540,"org.eclipse.epp.usagedata.ui",1586838205041
+started,bundle,com.altera.sbtgui.launch,13.0.0.156,"com.altera.sbtgui.launch",1586838205385
+deactivated,workbench,org.eclipse.ui.workbench,3.7.1.v20120104-1859,"",1586838205410

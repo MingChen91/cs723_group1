@@ -2,11 +2,11 @@
 **** Build of configuration Nios II for project frequencyRelay_bsp ****
 
 make all 
-      0 [main] pwd 14540 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+      0 [main] pwd 7848 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
 the public mailing list cygwin@cygwin.com
-      0 [main] sh 10588 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+      0 [main] sh 12292 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
 the public mailing list cygwin@cygwin.com
-      0 [main] sh 14476 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+      0 [main] sh 11456 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
 the public mailing list cygwin@cygwin.com
 [BSP build complete]
 

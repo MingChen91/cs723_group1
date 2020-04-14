@@ -9,5 +9,6 @@
         "task.h": "c",
         "altera_up_avalon_ps2.h": "c",
         "cstdint": "cpp"
-    }
+    },
+    "editor.formatOnSave": true
 }
