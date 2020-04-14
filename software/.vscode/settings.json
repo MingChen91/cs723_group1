@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "io.h": "c",
+        "system.h": "c",
+        "main.h": "c",
+        "freertos.h": "c",
+        "queue.h": "c",
+        "task.h": "c",
+        "altera_up_avalon_ps2.h": "c"
+    }
+}

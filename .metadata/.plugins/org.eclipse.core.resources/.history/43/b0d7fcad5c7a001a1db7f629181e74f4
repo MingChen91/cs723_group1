@@ -1,0 +1,82 @@
+// Defines
+#include <stddef.h>
+#include <stdio.h>
+#include "system.h"
+#include "io.h"
+#include <unistd.h>
+#include <string.h>
+#include "altera_up_avalon_ps2.h"
+#include "altera_up_ps2_keyboard.h"
+#include "altera_avalon_pio_regs.h" 	// to use PIO functions
+#include "alt_types.h"					// alt_u32 is a kind of alt_types
+#include "sys/alt_irq.h" 				// to register interrupts
+
+/* Scheduler includes. */
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+#include "main.h"
+
+/* Standard includes. */
+void button_interrupts_function(void* context, alt_u32 id)
+{
+	printf("hello");
+	// need to cast the context first before using it
+	int* temp = (int*) context;
+	(*temp) = IORD_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE);
+	// clears the edge capture register
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7);
+}
+
+void taskone(void *pvParameters){
+	while(1){
+		printf("what\n");
+		vTaskDelay(1000);
+	}
+}
+
+int main(void)
+{
+	// Create the tasks]
+	printf("Welcome to NIOSII\n");
+	
+	// Finally start the scheduler. //
+
+	xTaskCreate( taskone, "task1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+
+	int buttonValue = 0;
+
+  // clears the edge capture register. Writing 1 to bit clears pending interrupt for corresponding button.
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7);
+
+  // enable interrupts for all buttons
+	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(PUSH_BUTTON_BASE, 0x7);
+
+  // register the ISR
+	alt_irq_register(PUSH_BUTTON_IRQ,(void*)&buttonValue, button_interrupts_function);
+
+
+	vTaskStartScheduler();
+	//alt_irq_enable (PUSH_BUTTON_IRQ);
+	
+	
+	// Register interrupts
+
+	/* Will only reach here if there is insufficient heap available to start
+	 the scheduler. */
+	while(1){
+		IOWR(GREEN_LEDS_BASE,0, buttonValue);
+	}
+}
+
+void createTasks()
+{
+
+}
+
+void startInterrupts()
+{
+	
+}
+
+

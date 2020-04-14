@@ -1,0 +1,7 @@
+
+/*
+ Create all the tasks 
+ */
+void createTasks();
+void startInterrupts();
+
