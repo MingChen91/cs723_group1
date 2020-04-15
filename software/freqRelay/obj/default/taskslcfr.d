@@ -10,7 +10,10 @@ obj/default/taskslcfr.o: taskslcfr.c taskslcfr.h freertos/FreeRTOS.h \
   ../freqRelay_bsp//HAL/inc/alt_types.h \
   ../freqRelay_bsp//HAL/inc/sys/alt_irq.h freertos/mpu_wrappers.h \
   freertos/task.h freertos/list.h freertos/queue.h variables.h \
-  freertos/semphr.h freertos/queue.h
+  freertos/semphr.h freertos/queue.h \
+  ../freqRelay_bsp//drivers/inc/altera_avalon_pio_regs.h \
+  ../freqRelay_bsp//HAL/inc/io.h ../freqRelay_bsp//HAL/inc/alt_types.h \
+  ../freqRelay_bsp/system.h
 
 taskslcfr.h:
 
@@ -61,3 +64,11 @@ variables.h:
 freertos/semphr.h:
 
 freertos/queue.h:
+
+../freqRelay_bsp//drivers/inc/altera_avalon_pio_regs.h:
+
+../freqRelay_bsp//HAL/inc/io.h:
+
+../freqRelay_bsp//HAL/inc/alt_types.h:
+
+../freqRelay_bsp/system.h:

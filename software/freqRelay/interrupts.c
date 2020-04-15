@@ -6,7 +6,6 @@
  */
 
 #include "altera_avalon_pio_regs.h" // to use PIO functions
-#include "alt_types.h"				// alt_u32 is a kind of alt_types
 #include "sys/alt_irq.h"			// to register interrupts
 #include "variables.h"				// to access queues
 #include <stdio.h>
@@ -41,11 +40,10 @@ void button_isr()
 */
 void freq_adc_isr()
 {
-	FreqQStruct freqQueueItem;
+	QFreqStruct freqQueueItem;
 	freqQueueItem.adcCount = IORD(FREQUENCY_ANALYSER_BASE, 0);
 	freqQueueItem.isrTickCount = xTaskGetTickCountFromISR();
 	xQueueSendFromISR(qFreq, &freqQueueItem, pdFALSE);
-	return;
 }
 
 /* 

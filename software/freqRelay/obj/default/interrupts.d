@@ -1,7 +1,6 @@
 obj/default/interrupts.o: interrupts.c \
   ../freqRelay_bsp//drivers/inc/altera_avalon_pio_regs.h \
   ../freqRelay_bsp//HAL/inc/io.h ../freqRelay_bsp//HAL/inc/alt_types.h \
-  ../freqRelay_bsp//HAL/inc/alt_types.h \
   ../freqRelay_bsp//HAL/inc/sys/alt_irq.h \
   ../freqRelay_bsp//HAL/inc/nios2.h ../freqRelay_bsp//HAL/inc/alt_types.h \
   ../freqRelay_bsp/system.h ../freqRelay_bsp/linker.h \
@@ -18,8 +17,6 @@ obj/default/interrupts.o: interrupts.c \
 ../freqRelay_bsp//drivers/inc/altera_avalon_pio_regs.h:
 
 ../freqRelay_bsp//HAL/inc/io.h:
-
-../freqRelay_bsp//HAL/inc/alt_types.h:
 
 ../freqRelay_bsp//HAL/inc/alt_types.h:
 
