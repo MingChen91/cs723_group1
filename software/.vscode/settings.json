@@ -8,7 +8,10 @@
         "queue.h": "c",
         "task.h": "c",
         "altera_up_avalon_ps2.h": "c",
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "unistd.h": "c",
+        "stddef.h": "c",
+        "alt_types.h": "c"
     },
     "editor.formatOnSave": true
 }
