@@ -35,7 +35,7 @@ void task2()
 void switchPollingTask()
 {
 	QLedStruct sendLedQueueItem;
-	sendLedQueueItem.ledg = 255;
+	sendLedQueueItem.ledg = 0;
 	while (1)
 	{
 		sendLedQueueItem.ledr = (IORD(SLIDE_SWITCH_BASE, 0) & 0xff); // bit masking to 8 bits

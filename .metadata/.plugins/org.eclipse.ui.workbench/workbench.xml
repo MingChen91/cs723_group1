@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="34" version="2.0">
+<workbench progressCount="28" version="2.0">
 <workbenchAdvisor/>
-<window height="768" maximized="true" width="1396" x="2222" y="-19">
+<window height="768" maximized="true" width="1396" x="1993" y="-25">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="304"/>
@@ -13,13 +13,13 @@
 <coolItem id="org.eclipse.cdt.ui.CElementCreationActionSet" itemType="typeToolBarContribution" x="167" y="22"/>
 <coolItem id="org.eclipse.cdt.ui.buildConfigActionSet" itemType="typeToolBarContribution" x="89" y="22"/>
 <coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="129" y="22"/>
-<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="99" y="22"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="76" y="22"/>
 <coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="61" y="22"/>
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="22"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.cdt.ui.editor.asm.AsmEditor" itemType="typePlaceholder" x="-1" y="-1"/>
-<coolItem id="org.eclipse.cdt.ui.editor.CEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="org.eclipse.cdt.ui.editor.CEditor" itemType="typePlaceholder" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -28,46 +28,10 @@
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
 <folder appearance="1" expanded="2">
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
-<part id="1"/>
-<part id="2"/>
-<part id="3"/>
-<part id="4"/>
-<part id="5"/>
-<part id="6"/>
-</presentation>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
 </editorArea>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="hello_world.c" partName="hello_world.c" path="D:/CS723/software/freqRelay/hello_world.c" title="hello_world.c" tooltip="freqRelay/hello_world.c" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/hello_world.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="715" selectionTopPixel="0"/>
-</editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="taskslcfr.h" partName="taskslcfr.h" path="D:/CS723/software/freqRelay/taskslcfr.h" title="taskslcfr.h" tooltip="freqRelay/taskslcfr.h" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/taskslcfr.h"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="330" selectionTopPixel="0"/>
-</editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="taskslcfr.c" partName="taskslcfr.c" path="D:/CS723/software/freqRelay/taskslcfr.c" title="taskslcfr.c" tooltip="freqRelay/taskslcfr.c" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/taskslcfr.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="348" selectionTopPixel="10"/>
-</editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="variables.c" partName="variables.c" path="D:/CS723/software/freqRelay/variables.c" title="variables.c" tooltip="freqRelay/variables.c" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/variables.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="106" selectionTopPixel="0"/>
-</editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="variables.h" partName="variables.h" path="D:/CS723/software/freqRelay/variables.h" title="variables.h" tooltip="freqRelay/variables.h" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/variables.h"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="158" selectionTopPixel="0"/>
-</editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="interrupts.c" partName="interrupts.c" path="D:/CS723/software/freqRelay/interrupts.c" title="interrupts.c" tooltip="freqRelay/interrupts.c" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/interrupts.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="462" selectionTopPixel="0"/>
-</editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="interrupts.h" partName="interrupts.h" path="D:/CS723/software/freqRelay/interrupts.h" title="interrupts.h" tooltip="freqRelay/interrupts.h" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/interrupts.h"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="337" selectionTopPixel="0"/>
-</editor>
 </editors>
 <views>
 <view id="org.eclipse.debug.ui.MemoryView" partName="Memory">
@@ -106,8 +70,7 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Warnings"/>
-<category IMemento.internal.id="Errors"/>
+<category IMemento.internal.id="Warnings (1 item)"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="107" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="257" org.eclipse.ui.ide.resourceField="191" org.eclipse.ui.ide.severityAndDescriptionField="644"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -122,7 +85,7 @@
 </view>
 <view id="org.eclipse.mylyn.tasks.ui.views.tasks" partName="Task List"/>
 </views>
-<perspectives activePart="org.eclipse.cdt.ui.editor.CEditor" activePerspective="com.altera.sbtgui.ui.cPerspective">
+<perspectives activePart="org.eclipse.ui.navigator.ProjectExplorer" activePerspective="com.altera.sbtgui.ui.cPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.eclipse.cdt.internal.ui.CPerspectiveFactory" id="org.eclipse.cdt.ui.CPerspective" label="C/C++"/>
 <alwaysOnActionSet id="org.eclipse.mylyn.context.ui.actionSet"/>
@@ -296,6 +259,7 @@
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.ui.views.PropertySheet" label="Properties"/>
+<page content="org.eclipse.pde.runtime.LogView" label="LabelNotFound"/>
 <page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:USB-Blaster on localhost [USB-0].1.0" label="LabelNotFound"/>
 <page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:*" label="LabelNotFound"/>
 <page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView" label="LabelNotFound"/>
@@ -407,167 +371,7 @@
 </perspective>
 </perspectives>
 <workingSets/>
-<navigationHistory>
-<editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/taskslcfr.h"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/variables.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/variables.h"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/hello_world.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/interrupts.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/taskslcfr.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/interrupts.h"/>
-</editors>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="225" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="128" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="123" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="126" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="347" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="104" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="188" y="0"/>
-</item>
-<item historyLabel="hello_world.c" index="3">
-<position info="not_deleted" x="715" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="345" y="0"/>
-</item>
-<item historyLabel="interrupts.c" index="4">
-<position info="not_deleted" x="454" y="1"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="138" y="1"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="136" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="271" y="11"/>
-</item>
-<item historyLabel="taskslcfr.h" index="0">
-<position info="not_deleted" x="330" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="138" y="1"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="225" y="0"/>
-</item>
-<item historyLabel="hello_world.c" index="3">
-<position info="not_deleted" x="715" y="0"/>
-</item>
-<item historyLabel="taskslcfr.h" index="0">
-<position info="not_deleted" x="330" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="383" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="225" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="271" y="11"/>
-</item>
-<item historyLabel="interrupts.c" index="4">
-<position info="not_deleted" x="454" y="1"/>
-</item>
-<item historyLabel="interrupts.h" index="6">
-<position info="not_deleted" x="131" y="0"/>
-</item>
-<item historyLabel="hello_world.c" index="3">
-<position info="not_deleted" x="715" y="0"/>
-</item>
-<item historyLabel="taskslcfr.h" index="0">
-<position info="not_deleted" x="330" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="242" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="225" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="240" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="242" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="240" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="240" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="350" y="0"/>
-</item>
-<item historyLabel="interrupts.c" index="4">
-<position info="not_deleted" x="582" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="158" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="158" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="hello_world.c" index="3">
-<position info="not_deleted" x="715" y="0"/>
-</item>
-<item historyLabel="taskslcfr.h" index="0">
-<position info="not_deleted" x="330" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="242" y="0"/>
-</item>
-<item historyLabel="variables.c" index="1">
-<position info="not_deleted" x="106" y="0"/>
-</item>
-<item historyLabel="variables.h" index="2">
-<position info="not_deleted" x="158" y="0"/>
-</item>
-<item historyLabel="interrupts.c" index="4">
-<position info="not_deleted" x="386" y="0"/>
-</item>
-<item historyLabel="interrupts.h" index="6">
-<position info="not_deleted" x="337" y="0"/>
-</item>
-<item historyLabel="taskslcfr.c" index="5">
-<position info="not_deleted" x="348" y="0"/>
-</item>
-<item active="true" historyLabel="interrupts.c" index="4">
-<position info="not_deleted" x="580" y="0"/>
-</item>
-</navigationHistory>
+<navigationHistory/>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
@@ -585,6 +389,12 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="hello_world.c" tooltip="freqRelay/hello_world.c">
+<persistable path="/freqRelay/hello_world.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.c" tooltip="freqRelay/freertos/port.c">
+<persistable path="/freqRelay/freertos/port.c"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="frequencyRelay/main.c">
 <persistable path="/frequencyRelay/main.c"/>
 </file>
@@ -609,9 +419,6 @@
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="tasks.h" tooltip="freqRelay/tasks.h">
 <persistable path="/freqRelay/tasks.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="hello_world.c" tooltip="freqRelay/hello_world.c">
-<persistable path="/freqRelay/hello_world.c"/>
-</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="queue.h" tooltip="frequencyRelay/freertos/queue.h">
 <persistable path="/frequencyRelay/freertos/queue.h"/>
 </file>
@@ -626,9 +433,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="FreeRTOS.h" tooltip="frequencyRelay/freertos/FreeRTOS.h">
 <persistable path="/frequencyRelay/freertos/FreeRTOS.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="altera_avalon_timer_regs.h" tooltip="frequencyRelay_bsp/drivers/inc/altera_avalon_timer_regs.h">
-<persistable path="/frequencyRelay_bsp/drivers/inc/altera_avalon_timer_regs.h"/>
 </file>
 </mruList>
 </workbench>
