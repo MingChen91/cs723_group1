@@ -41,7 +41,7 @@ void button_isr()
 void freq_adc_isr()
 {
 	QFreqStruct freqQueueItem;
-	freqQueueItem.adcCount = IORD(FREQUENCY_ANALYSER_BASE, 0);
+	freqQueueItem.adcSampleCount = IORD(FREQUENCY_ANALYSER_BASE, 0);
 	freqQueueItem.isrTickCount = xTaskGetTickCountFromISR();
 	xQueueSendFromISR(qFreq, &freqQueueItem, pdFALSE);
 }

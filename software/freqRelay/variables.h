@@ -8,27 +8,53 @@
 #ifndef VARIABLES_H_
 #define VARIABLES_H_
 
-#define QUEUE_SIZE 20
+#define QUEUE_SIZE_SMALL 20
+#define QUEUE_SIZE_BIG 100
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 /* Structs */
-
+// From frequency isr to violation task
 typedef struct
 {
-	int adcCount;
+	uint16_t adcSampleCount;
 	TickType_t isrTickCount;
 } QFreqStruct;
 
+// queue going into leddriver
 typedef struct
 {
 	uint8_t ledr; // 8 bit of leds
 	uint8_t ledg;
 } QLedStruct;
 
+typedef struct
+{
+	uint8_t violationOccured;
+	uint8_t modeChanged; // used tell loadmanagement this is the first violation, immediately shed one load.
+	portTickType isrTickCount;
+} QViolationStruct;
+
+typedef enum
+{
+	FREQ = 1,
+	MODE = 2,
+	EXEC_TIME = 3,
+	ROC_THRESH = 4,
+	FREQ_TRHESH = 5
+} InformationType;
+
+typedef struct
+{
+	InformationType informationType;
+	float value;
+
+} QInformationStruct;
+
 /*  Variables */
 QueueHandle_t qFreq;
 QueueHandle_t qLed;
+QueueHandle_t qInformation;
 SemaphoreHandle_t modeMutex;
 int currentMode;
 

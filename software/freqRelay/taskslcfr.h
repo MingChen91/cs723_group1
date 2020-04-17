@@ -8,6 +8,11 @@
 #ifndef TASKSLCFR_H_
 #define TASKSLCFR_H_
 
+#define SAMPLING_FREQUENCY 16000
+
+// DEBUGS
+#define DEBUG_FREQ 0
+
 /* FreeRTOS includes */
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
