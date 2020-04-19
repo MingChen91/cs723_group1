@@ -82,6 +82,12 @@ void informationTask()
 			case FREQ:
 				fprintf(serialUart, "f%f\r\n", incomingInformationItem.value);
 				break;
+			case MODE:
+				// send mode to uart
+				break;
+			case EXEC_TIME:
+				// calculate highest, lowest , average, total
+				break;
 			default:
 				break;
 			}
@@ -117,8 +123,8 @@ void ledDriverTask()
 
 void createTasks()
 {
-	xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-	xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-	xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
+	// xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
+	// xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
+	// xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	// xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 }

@@ -51,12 +51,19 @@ typedef struct
 
 } QInformationStruct;
 
+typedef enum
+{
+	NORMAL = 1,
+	LOAD_MANAGEMENT = 2,
+	MAINTANENCE = 3
+} OpMode;
+
 /*  Variables */
 QueueHandle_t qFreq;
 QueueHandle_t qLed;
 QueueHandle_t qInformation;
 SemaphoreHandle_t modeMutex;
-int currentMode;
+OpMode currentMode;
 
 /*Functions */
 void createVariables();

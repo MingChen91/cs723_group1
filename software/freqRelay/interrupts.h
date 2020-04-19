@@ -14,6 +14,6 @@
 
 void button_isr();
 void freq_adc_isr();
-void resgisterInterrupts();
+void registerInterrupts();
 
 #endif /* INTERRUPTS_H_ */

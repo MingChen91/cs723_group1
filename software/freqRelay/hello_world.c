@@ -22,7 +22,7 @@ int main()
 {
 	createTasks();
 	createVariables();
-	resgisterInterrupts();
+	registerInterrupts();
 	vTaskStartScheduler();
 	return 0;
 }
