@@ -8,9 +8,9 @@
 
 void createVariables()
 {
-	// currentMode = 0;
-	// qFreq = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QFreqStruct)); // queue for from the freq isr to the freq violation
-	// qLed = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QLedStruct));
-	// qInformation = xQueueCreate(QUEUE_SIZE_BIG, sizeof(QInformationStruct));
-	// modeMutex = xSemaphoreCreateMutex(); // mutex for protecting the mode
+	currentMode = 0;
+	qFreq = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QFreqStruct)); // queue for from the freq isr to the freq violation
+	qLed = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QLedStruct));
+	qInformation = xQueueCreate(QUEUE_SIZE_BIG, sizeof(QInformationStruct));
+	qKeyBoard = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(int));
 }

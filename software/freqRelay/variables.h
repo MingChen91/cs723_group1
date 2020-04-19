@@ -58,11 +58,11 @@ typedef enum
 	MAINTANENCE = 3
 } OpMode;
 
-/*  Variables */
+/******** Variables ********/
 QueueHandle_t qFreq;
 QueueHandle_t qLed;
 QueueHandle_t qInformation;
-SemaphoreHandle_t modeMutex;
+QueueHandle_t qKeyBoard;
 OpMode currentMode;
 
 /*Functions */

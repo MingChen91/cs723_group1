@@ -7,13 +7,13 @@
 
 #ifndef INTERRUPTS_H_
 #define INTERRUPTS_H_
+#define ENTER_KEY 0x5a
+
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
-void button_isr();
-void freq_adc_isr();
 void registerInterrupts();
 
 #endif /* INTERRUPTS_H_ */
