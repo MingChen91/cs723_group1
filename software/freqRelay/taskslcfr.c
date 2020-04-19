@@ -132,34 +132,38 @@ void ledDriverTask()
 int8_t buildNumber(float *resultFloat, char input, char *charBuffer)
 {
 	// Keeps track of which which element in char array
-	static int bufferCount = 0;
+	static uint8_t bufferIndex = 0;
 
 	// Checks if input is valid, needs to be 0-9 , or '.' or null terminator
 	if (((input < '0') || (input > '9')) && (input != '.') && (input != '\0'))
 		return 1;
 
 	// New input gets put into the buffer
-	charBuffer[bufferCount] = input;
-	printf("Count : %d\n", bufferCount);
-	bufferCount++;
+	charBuffer[bufferIndex] = input;
 
-	// If end of string, or buffer size reached, convert to float.
-	if (input == '\0')
+	// Check if overflowing char buffer
+	if (bufferIndex >= BUFFER_SIZE - 1) // last char needed for null terminator
 	{
-		*resultFloat = strtof(charBuffer, charBuffer[bufferCount - 1]);
-		bufferCount = 0;
-		return 0;
+		charBuffer[bufferIndex] = '\0';
 	}
-	else if (bufferCount > BUFFER_SIZE - 2)
+
+	// End of string, convert to float
+	if (charBuffer[bufferIndex] == '\0')
 	{
-		charBuffer[bufferCount] = '\0';
-		*resultFloat = strtof(charBuffer, charBuffer[bufferCount - 1]);
-		bufferCount = 0;
+		// Convert the string to float
+		*resultFloat = strtof(charBuffer, charBuffer[bufferIndex]);
+		// reset buffer
+		for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
+		{
+			charBuffer[bufferIndex] = '\0';
+		}
+		bufferIndex = 0;
 		return 0;
 	}
 	else
 	{
 		printf("Buffer : %s\n", charBuffer);
+		bufferIndex++;
 		return 1;
 	}
 }
@@ -175,7 +179,7 @@ void keyboardTask()
 	enum KeyBoardState state = IDLE;
 	unsigned char receieveKeyboardQueueItem;
 
-	char charBuffer[BUFFER_SIZE];
+	char charBuffer[BUFFER_SIZE] = {'\0'};
 	float resultFloat = 0;
 
 	int8_t status;
@@ -210,6 +214,12 @@ void keyboardTask()
 				}
 				break;
 			case BUILDING_ROC:
+				status = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
+				if (status == 0)
+				{
+					printf("New ROC : Freq = %f \n", resultFloat);
+					state = IDLE;
+				}
 				// build temp buffer and change freq
 				break;
 			default:

@@ -1525,3 +1525,191 @@ the public mailing list cygwin@cygwin.com
 [testBuilds build complete]
 
 **** Build Finished ****
+
+**** Build of configuration Nios II for project testBuilds ****
+
+make all 
+      0 [main] sh 14632 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 8360 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 14568 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Building ../testBuilds_bsp/
+the public mailing list cygwin@cygwin.com
+make --no-print-directory -C ../testBuilds_bsp/
+      0 [main] pwd 2892 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 1128 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 13300 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[BSP build complete]
+      0 [main] true 12548 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14172 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[testBuilds build complete]
+
+**** Build Finished ****
+
+**** Build of configuration Nios II for project freqRelay ****
+
+make all 
+      0 [main] sh 7192 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 13748 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 10204 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+Info: Building ../freqRelay_bsp/
+make --no-print-directory -C ../freqRelay_bsp/
+      0 [main] pwd 428 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+    433 [main] sh 6844 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14692 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[BSP build complete]
+      0 [main] true 13508 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 2816 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[freqRelay build complete]
+
+**** Build Finished ****
+
+**** Build of configuration Nios II for project freqRelay ****
+
+make all 
+      0 [main] sh 6844 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14784 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 3348 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Building ../freqRelay_bsp/
+the public mailing list cygwin@cygwin.com
+make --no-print-directory -C ../freqRelay_bsp/
+      0 [main] pwd 14648 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 4480 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 8972 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[BSP build complete]
+      0 [main] true 8860 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 15088 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[freqRelay build complete]
+
+**** Build Finished ****
+
+**** Build of configuration Nios II for project freqRelay ****
+
+make all 
+      0 [main] sh 14728 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14432 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 1596 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Building ../freqRelay_bsp/
+the public mailing list cygwin@cygwin.com
+make --no-print-directory -C ../freqRelay_bsp/
+      0 [main] pwd 8360 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 13756 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14352 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[BSP build complete]
+      0 [main] echo 15264 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Compiling taskslcfr.c to obj/default/taskslcfr.o
+the public mailing list cygwin@cygwin.com
+      0 [main] mkdir 3836 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+nios2-elf-gcc -xc -MP -MMD -c -I../freqRelay_bsp//HAL/inc -I../freqRelay_bsp/ -I../freqRelay_bsp//drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mhw-div -mhw-mul -mno-hw-mulx  -o obj/default/taskslcfr.o taskslcfr.c
+taskslcfr.c: In function 'frequencyViolationTask':
+taskslcfr.c:19: warning: unused variable 'outgoingViolationItem'
+taskslcfr.c: In function 'buildNumber':
+taskslcfr.c:153: warning: passing argument 2 of 'strtof' makes pointer from integer without a cast
+      0 [main] true 15220 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 15260 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Linking freqRelay.elf
+the public mailing list cygwin@cygwin.com
+nios2-elf-g++  -T'../freqRelay_bsp//linker.x' -msys-crt0='../freqRelay_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../freqRelay_bsp/   -Wl,-Map=freqRelay.map   -O0 -g -Wall   -EL -mhw-div -mhw-mul -mno-hw-mulx  -o freqRelay.elf obj/default/freertos/croutine.o obj/default/freertos/event_groups.o obj/default/freertos/heap.o obj/default/freertos/list.o obj/default/freertos/port.o obj/default/freertos/queue.o obj/default/freertos/tasks.o obj/default/freertos/timers.o obj/default/hello_world.o obj/default/interrupts.o obj/default/taskslcfr.o obj/default/variables.o obj/default/freertos/port_asm.o -lm 
+      0 [main] sh 15044 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+nios2-elf-insert freqRelay.elf --thread_model hal --cpu_name nios2 --qsys true --simulation_enabled false --id 7 --sidp 0x430f0 --timestamp 1393900972 --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name nios2 --quartus_project_dir "D:/CS723" --sopcinfo D:/CS723/nios2.sopcinfo
+the public mailing list cygwin@cygwin.com
+      0 [main] uname 9700 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 15200 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+Info: (freqRelay.elf) 617 KBytes program size (code + initialized data).
+Info:                 130559 KBytes free for stack + heap.
+      0 [main] echo 9208 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+Info: Creating freqRelay.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source freqRelay.elf >freqRelay.objdump
+      0 [main] sh 13772 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14596 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[freqRelay build complete]
+
+**** Build Finished ****
+
+**** Build of configuration Nios II for project freqRelay ****
+
+make all 
+      0 [main] sh 10576 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14992 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 14924 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Building ../freqRelay_bsp/
+the public mailing list cygwin@cygwin.com
+make --no-print-directory -C ../freqRelay_bsp/
+      0 [main] pwd 15344 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 3084 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14344 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[BSP build complete]
+      0 [main] echo 1296 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Compiling taskslcfr.c to obj/default/taskslcfr.o
+the public mailing list cygwin@cygwin.com
+      0 [main] mkdir 4852 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+nios2-elf-gcc -xc -MP -MMD -c -I../freqRelay_bsp//HAL/inc -I../freqRelay_bsp/ -I../freqRelay_bsp//drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mhw-div -mhw-mul -mno-hw-mulx  -o obj/default/taskslcfr.o taskslcfr.c
+the public mailing list cygwin@cygwin.com
+taskslcfr.c: In function 'frequencyViolationTask':
+taskslcfr.c:19: warning: unused variable 'outgoingViolationItem'
+taskslcfr.c: In function 'buildNumber':
+taskslcfr.c:153: warning: passing argument 2 of 'strtof' makes pointer from integer without a cast
+      0 [main] true 6732 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] echo 14820 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+Info: Linking freqRelay.elf
+nios2-elf-g++  -T'../freqRelay_bsp//linker.x' -msys-crt0='../freqRelay_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../freqRelay_bsp/   -Wl,-Map=freqRelay.map   -O0 -g -Wall   -EL -mhw-div -mhw-mul -mno-hw-mulx  -o freqRelay.elf obj/default/freertos/croutine.o obj/default/freertos/event_groups.o obj/default/freertos/heap.o obj/default/freertos/list.o obj/default/freertos/port.o obj/default/freertos/queue.o obj/default/freertos/tasks.o obj/default/freertos/timers.o obj/default/hello_world.o obj/default/interrupts.o obj/default/taskslcfr.o obj/default/variables.o obj/default/freertos/port_asm.o -lm 
+   1498 [main] sh 15228 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+nios2-elf-insert freqRelay.elf --thread_model hal --cpu_name nios2 --qsys true --simulation_enabled false --id 7 --sidp 0x430f0 --timestamp 1393900972 --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name nios2 --quartus_project_dir "D:/CS723" --sopcinfo D:/CS723/nios2.sopcinfo
+the public mailing list cygwin@cygwin.com
+   3698 [main] uname 3836 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 6784 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+Info: (freqRelay.elf) 618 KBytes program size (code + initialized data).
+Info:                 130559 KBytes free for stack + heap.
+      0 [main] echo 13048 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+Info: Creating freqRelay.objdump
+the public mailing list cygwin@cygwin.com
+nios2-elf-objdump --disassemble --syms --all-header --source freqRelay.elf >freqRelay.objdump
+      0 [main] sh 3260 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+      0 [main] sh 14552 find_fast_cwd: WARNING: Couldn't compute FAST_CWD pointer.  Please report this problem to
+the public mailing list cygwin@cygwin.com
+[freqRelay build complete]
+
+**** Build Finished ****
