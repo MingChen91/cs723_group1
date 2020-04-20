@@ -44,6 +44,10 @@ void frequencyViolationTask()
 			outgoingInformationItem.value = frequencyNew;
 			xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
 
+			outgoingInformationItem.informationType = ROC;
+			outgoingInformationItem.value = rateOfChange;
+			xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
+
 #if DEBUG_FREQ
 			printf("old freq %f\n", frequencyOld);
 			printf("new freq %f\n", frequencyNew);
@@ -86,6 +90,9 @@ void informationTask()
 			case FREQ:
 				fprintf(serialUart, "f%f\r\n", incomingInformationItem.value);
 				break;
+			case ROC:
+				fprintf(serialUart, "r%f\r\n", incomingInformationItem.value);
+				break;
 			case MODE:
 				fprintf(serialUart, "M%d\r\n", (int)incomingInformationItem.value);
 				break;
@@ -104,6 +111,7 @@ void informationTask()
 				break;
 			}
 		}
+		vTaskDelay(5); // Sending too fast floods the labview program add a small delay
 	}
 	fclose(serialUart);
 }

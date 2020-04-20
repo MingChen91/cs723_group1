@@ -38,10 +38,11 @@ typedef struct
 typedef enum
 {
 	FREQ = 1,
-	MODE = 2,
-	EXEC_TIME = 3,
-	ROC_THRESH = 4,
-	FREQ_TRHESH = 5
+	ROC = 2,
+	MODE = 3,
+	EXEC_TIME = 4,
+	ROC_THRESH = 5,
+	FREQ_TRHESH = 6
 } InformationType;
 
 typedef struct
