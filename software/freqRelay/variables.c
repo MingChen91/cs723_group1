@@ -19,4 +19,6 @@ void createVariables()
 	qKeyBoard = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(int));
 	xMutexFreq = xSemaphoreCreateMutex();
 	xMutexRoc = xSemaphoreCreateMutex();
+	xMutexMode = xSemaphoreCreateMutex();
+	xButtonSemaphore = xSemaphoreCreateCounting(5, 0);
 }

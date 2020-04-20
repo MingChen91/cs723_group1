@@ -64,6 +64,8 @@ QueueHandle_t qInformation;
 QueueHandle_t qKeyBoard;
 SemaphoreHandle_t xMutexRoc;
 SemaphoreHandle_t xMutexFreq;
+SemaphoreHandle_t xMutexMode;
+SemaphoreHandle_t xButtonSemaphore;
 OpMode currentMode;
 float frequencyThreshold, rocThreshold;
 

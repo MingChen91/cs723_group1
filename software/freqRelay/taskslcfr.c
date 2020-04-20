@@ -55,6 +55,9 @@ void frequencyViolationTask()
 	}
 }
 
+/*
+	displaying information to UART
+*/
 void informationTask()
 {
 	// create a seperate queue for serial
@@ -84,10 +87,18 @@ void informationTask()
 				fprintf(serialUart, "f%f\r\n", incomingInformationItem.value);
 				break;
 			case MODE:
-				// send mode to uart
+				fprintf(serialUart, "M%d\r\n", (int)incomingInformationItem.value);
 				break;
 			case EXEC_TIME:
 				// calculate highest, lowest , average, total
+				break;
+			case ROC_THRESH:
+				// Rate of Change Threshold sent to UART
+				fprintf(serialUart, "R%f\r\n", incomingInformationItem.value);
+				break;
+			case FREQ_TRHESH:
+				// Frequenecy Threshold sent to UART.
+				fprintf(serialUart, "F%f\r\n", incomingInformationItem.value);
 				break;
 			default:
 				break;
@@ -185,7 +196,7 @@ void keyboardTask()
 	char charBuffer[BUFFER_SIZE] = {'\0'};
 	float resultFloat = 0;
 	int8_t buildStatus;
-
+	QInformationStruct outGoingInformation;
 	while (1)
 	{
 		if (xQueueReceive(qKeyBoard, &receieveKeyboardQueueItem, portMAX_DELAY))
@@ -207,22 +218,43 @@ void keyboardTask()
 					break;
 				}
 				break;
-			case BUILDING_FREQ:
 
+			case BUILDING_FREQ:
 				buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
 				if (buildStatus == 0)
 				{
-
-					printf("New Freq : Freq = %10.5f \n", resultFloat);
+					if (xMutexFreq != NULL)
+					{
+						if (xSemaphoreTake(xMutexFreq, portMAX_DELAY))
+						{
+							frequencyThreshold = resultFloat;
+							xSemaphoreGive(xMutexFreq);
+						}
+					}
+					// send to information queue to read.
+					outGoingInformation.informationType = FREQ_TRHESH;
+					outGoingInformation.value = frequencyThreshold;
+					xQueueSend(qInformation, &outGoingInformation, pdFALSE);
 					state = IDLE;
 				}
 				// build temp buffer and change freq
 				break;
+
 			case BUILDING_ROC:
 				buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
 				if (buildStatus == 0)
 				{
-					printf("New ROC : Freq = %10.5f \n", resultFloat);
+					if (xMutexRoc != NULL)
+					{
+						if (xSemaphoreTake(xMutexRoc, portMAX_DELAY))
+						{
+							rocThreshold = resultFloat;
+							xSemaphoreGive(xMutexRoc);
+						}
+					}
+					outGoingInformation.informationType = ROC_THRESH;
+					outGoingInformation.value = rocThreshold;
+					xQueueSend(qInformation, &outGoingInformation, pdFALSE);
 					state = IDLE;
 				}
 				// build temp buffer and change ROC
@@ -234,6 +266,35 @@ void keyboardTask()
 	}
 }
 
+/* 	
+	Button to change to maintence mode. 
+*/
+void buttonTask()
+{
+	QInformationStruct outgoingInfoItem;
+	while (1)
+	{
+		if (xSemaphoreTake(xButtonSemaphore, portMAX_DELAY))
+		{
+			if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
+			{
+				if (currentMode == NORMAL || currentMode == LOAD_MANAGEMENT)
+				{
+					currentMode = MAINTANENCE;
+				}
+				else
+				{
+					currentMode = NORMAL;
+				}
+				outgoingInfoItem.value = currentMode;
+				xSemaphoreGive(xMutexMode);
+			}
+			outgoingInfoItem.informationType = MODE;
+			xQueueSend(qInformation, &outgoingInfoItem, pdFALSE);
+		}
+	}
+}
+
 void createTasks()
 {
 	xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
@@ -241,4 +302,5 @@ void createTasks()
 	xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 	xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 	xTaskCreate(keyboardTask, "keyboardTask", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(buttonTask, "buttonTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 }

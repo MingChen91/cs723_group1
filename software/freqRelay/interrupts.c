@@ -23,14 +23,8 @@
 */
 void buttonIsr()
 {
-	if ((currentMode == NORMAL) || (currentMode == LOAD_MANAGEMENT))
-	{
-		currentMode = MAINTANENCE;
-	}
-	else
-	{
-		currentMode = NORMAL;
-	}
+	// gives a semaphore for the button task
+	xSemaphoreGiveFromISR(xButtonSemaphore, NULL);
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7);
 }
 
@@ -103,6 +97,6 @@ void registerInterrupts()
 
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7); // clear the edge cap reg of buttons
 	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(PUSH_BUTTON_BASE, 0x7); // enable for all buttons
-	// alt_irq_register(PUSH_BUTTON_IRQ, NULL, button_isr);
+	alt_irq_register(PUSH_BUTTON_IRQ, NULL, buttonIsr);
 	alt_irq_register(FREQUENCY_ANALYSER_IRQ, NULL, freqAdcIsr);
 }
