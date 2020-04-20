@@ -48,7 +48,6 @@ typedef struct
 {
 	InformationType informationType;
 	float value;
-
 } QInformationStruct;
 
 typedef enum
@@ -63,7 +62,10 @@ QueueHandle_t qFreq;
 QueueHandle_t qLed;
 QueueHandle_t qInformation;
 QueueHandle_t qKeyBoard;
+SemaphoreHandle_t xMutexRoc;
+SemaphoreHandle_t xMutexFreq;
 OpMode currentMode;
+float frequencyThreshold, rocThreshold;
 
 /*Functions */
 void createVariables();

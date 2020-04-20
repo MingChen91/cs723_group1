@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stddef.h>
+
 #include "io.h"
 #include "altera_up_avalon_ps2.h"
 #include "altera_up_ps2_keyboard.h"
@@ -7,31 +7,31 @@
 
 void ps2_isr(void *context, alt_u32 id)
 {
-	static unsigned char counter;
 	char ascii;
 	int status = 0;
 	unsigned char key = 0;
 	KB_CODE_TYPE decode_mode;
 	status = decode_scancode(context, &decode_mode, &key, &ascii);
-	if ((status == 0) && (counter == 0)) //success
+	if (status == 0) //success
 	{
 		// print out the result
 		switch (decode_mode)
 		{
 		case KB_ASCII_MAKE_CODE:
-			printf("ASCII   : %c\n", ascii);
+			printf("ASCII   : %x\n", ascii);
 			break;
+		case KB_LONG_BINARY_MAKE_CODE:
+			// do nothing
 		case KB_BINARY_MAKE_CODE:
 			printf("MAKE CODE : %x\n", key);
 			break;
+		case KB_BREAK_CODE:
+			// do nothing
 		default:
+			printf("DEFAULT   : %x\n", key);
 			break;
 		}
-	}
-	counter++;
-	if (counter > 2)
-	{
-		counter = 0;
+		IOWR(SEVEN_SEG_BASE, 0, ascii);
 	}
 }
 int main()

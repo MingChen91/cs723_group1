@@ -94,9 +94,12 @@ void informationTask()
 			}
 		}
 	}
-	// fclose(serialUart);
+	fclose(serialUart);
 }
 
+/*
+	Polls the switchs 
+*/
 void switchPollingTask()
 {
 	QLedStruct sendLedQueueItem;
@@ -108,6 +111,7 @@ void switchPollingTask()
 		vTaskDelay(100);
 	}
 }
+
 /*
 	Driving LEDs
 */
@@ -127,19 +131,18 @@ void ledDriverTask()
 /*
 	Building Freq and ROC from keyboard ISR individual chars
 */
-
 #define BUFFER_SIZE 10
-int8_t buildNumber(float *resultFloat, char input, char *charBuffer)
+int8_t buildNumber(float *resultFloat, char inputChar, char *charBuffer)
 {
 	// Keeps track of which which element in char array
 	static uint8_t bufferIndex = 0;
 
 	// Checks if input is valid, needs to be 0-9 , or '.' or null terminator
-	if (((input < '0') || (input > '9')) && (input != '.') && (input != '\0'))
+	if (((inputChar < '0') || (inputChar > '9')) && (inputChar != '.') && (inputChar != '\0'))
 		return 1;
 
 	// New input gets put into the buffer
-	charBuffer[bufferIndex] = input;
+	charBuffer[bufferIndex] = inputChar;
 
 	// Check if overflowing char buffer
 	if (bufferIndex >= BUFFER_SIZE - 1) // last char needed for null terminator
@@ -151,7 +154,7 @@ int8_t buildNumber(float *resultFloat, char input, char *charBuffer)
 	if (charBuffer[bufferIndex] == '\0')
 	{
 		// Convert the string to float
-		*resultFloat = strtof(charBuffer, charBuffer[bufferIndex]);
+		*resultFloat = strtof(charBuffer, NULL);
 		// reset buffer
 		for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
 		{
@@ -160,14 +163,15 @@ int8_t buildNumber(float *resultFloat, char input, char *charBuffer)
 		bufferIndex = 0;
 		return 0;
 	}
-	else
-	{
-		printf("Buffer : %s\n", charBuffer);
-		bufferIndex++;
-		return 1;
-	}
+
+	printf("Buffer : %s\n", charBuffer);
+	bufferIndex++;
+	return 1;
 }
 
+/*
+	Taking inputs from the keyboard and changing thresholds 
+*/
 void keyboardTask()
 {
 	enum KeyBoardState
@@ -178,11 +182,10 @@ void keyboardTask()
 	};
 	enum KeyBoardState state = IDLE;
 	unsigned char receieveKeyboardQueueItem;
-
 	char charBuffer[BUFFER_SIZE] = {'\0'};
 	float resultFloat = 0;
+	int8_t buildStatus;
 
-	int8_t status;
 	while (1)
 	{
 		if (xQueueReceive(qKeyBoard, &receieveKeyboardQueueItem, portMAX_DELAY))
@@ -205,22 +208,24 @@ void keyboardTask()
 				}
 				break;
 			case BUILDING_FREQ:
-				// build temp buffer and change freq
-				status = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
-				if (status == 0)
+
+				buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
+				if (buildStatus == 0)
 				{
-					printf("New Freq : Freq = %f \n", resultFloat);
+
+					printf("New Freq : Freq = %10.5f \n", resultFloat);
 					state = IDLE;
 				}
+				// build temp buffer and change freq
 				break;
 			case BUILDING_ROC:
-				status = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
-				if (status == 0)
+				buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
+				if (buildStatus == 0)
 				{
-					printf("New ROC : Freq = %f \n", resultFloat);
+					printf("New ROC : Freq = %10.5f \n", resultFloat);
 					state = IDLE;
 				}
-				// build temp buffer and change freq
+				// build temp buffer and change ROC
 				break;
 			default:
 				break;
