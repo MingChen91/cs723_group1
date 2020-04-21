@@ -9,7 +9,7 @@ obj/default/variables.o: variables.c variables.h freertos/FreeRTOS.h \
   ../freqRelay_bsp/system.h ../freqRelay_bsp//HAL/inc/nios2.h \
   ../freqRelay_bsp//HAL/inc/alt_types.h \
   ../freqRelay_bsp//HAL/inc/sys/alt_irq.h freertos/mpu_wrappers.h \
-  freertos/semphr.h freertos/queue.h
+  freertos/task.h freertos/list.h freertos/semphr.h freertos/queue.h
 
 variables.h:
 
@@ -48,6 +48,10 @@ freertos/portmacro.h:
 ../freqRelay_bsp//HAL/inc/sys/alt_irq.h:
 
 freertos/mpu_wrappers.h:
+
+freertos/task.h:
+
+freertos/list.h:
 
 freertos/semphr.h:
 

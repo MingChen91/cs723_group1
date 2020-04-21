@@ -1,0 +1,78 @@
+conditionViolationTask(){
+    calculate freq , roc
+    switch (mode){
+        case (normal)
+            if (violations) {
+                change mode to 1
+                sleep switchpolling
+                start loadmanagement
+                send data to violation queue
+            }
+        case (loadmanagement)
+            send data to violation queue 
+
+        case (maintenance)
+
+        default 
+        }
+}
+
+
+loadmanagement(){
+    enum State ( init, shed, unshed, finish)
+    
+    int switchconfig; 
+
+    tickType_t startTick
+    switch (state) {
+        case init
+            CurrentSwitchconfig = read switch
+            shed lowest priority led
+            calculate exec time
+            startTick = getcurrent tick
+        
+        case shed
+            shedswitchconfig &= readswitch() // can turn off, but not turn on
+            if (violation)
+                if (current tick - start tick >= 500)
+                    shed lowest priority
+            else // !violation
+                go to unshed
+                startTick = current tick. 
+
+        case unshed
+            if (!violation)
+                    if (current tick - start tick >= 500)
+                        unshed lowest priority 
+                            (if unshed == switch config)
+                                state = finish
+                else // violation
+                    go to shed
+                    startTick = current tick. 
+
+        case finish
+            change mode to normal
+            resume switch polling (?)
+            end this task
+    }
+}
+
+
+
+
+char buffer[SIZE];
+uint8_t bufferIndex = 0;
+
+while 1{
+    if (get from queue) {
+        char input = char from queue.
+        buffer[bufferIndex] = input;
+        
+        if (reached the end) {
+            convert to float/double
+            reset buffers
+        } else {
+            bufferIndex ++;
+        }
+    }
+}

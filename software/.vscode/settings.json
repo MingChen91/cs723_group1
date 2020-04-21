@@ -14,7 +14,9 @@
         "alt_types.h": "c",
         "altera_avalon_pio_regs.h": "c",
         "taskslcfr.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "variables.h": "c",
+        "semphr.h": "c"
     },
     "editor.formatOnSave": true
 }

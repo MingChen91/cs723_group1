@@ -21,5 +21,6 @@
 
 /* Functions*/
 void createTasks();
+void loadManagementTask();
 
 #endif /* TASKS_H_ */

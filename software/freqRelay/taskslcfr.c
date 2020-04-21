@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "taskslcfr.h"
 #include "altera_avalon_pio_regs.h" // to use PIO functions
 #include "system.h"					// for IORD()
@@ -18,6 +19,7 @@ void frequencyViolationTask()
 	QInformationStruct outgoingInformationItem;
 	QViolationStruct outgoingViolationItem;
 	uint16_t sampleCountNew, sampleCountOld;
+	uint8_t violationOccured;
 	float frequencyNew, frequencyOld, rateOfChange;
 
 	// first run, collect data so have 2 data points to calculate averages
@@ -47,6 +49,41 @@ void frequencyViolationTask()
 			outgoingInformationItem.informationType = ROC;
 			outgoingInformationItem.value = rateOfChange;
 			xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
+			violationOccured = ((frequencyNew < frequencyThreshold) || (abs(rateOfChange) > rocThreshold));
+
+			switch (currentMode)
+			{
+			case STABLE:
+				if (violationOccured)
+				{
+					if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
+					{
+						currentMode = LOAD_MANAGEMENT;
+						xSemaphoreGive(xMutexMode);
+					}
+					outgoingInformationItem.informationType = MODE;
+					outgoingInformationItem.value = currentMode;
+					xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
+
+					vTaskSuspend(vSwitchPollingTaskHandle); // sleep polling
+					// Start task management
+					// TODO if state == not created.
+					xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+					outgoingViolationItem.isrTickCount = incomingFreqItem.isrTickCount;
+					outgoingViolationItem.violationOccured = violationOccured;
+					xQueueSend(qViolation, &outgoingViolationItem, pdFALSE); // send to load management
+				}
+				break;
+
+			case LOAD_MANAGEMENT:
+				outgoingViolationItem.violationOccured = violationOccured;
+				outgoingViolationItem.isrTickCount = incomingFreqItem.isrTickCount;
+				xQueueSend(qViolation, &outgoingViolationItem, pdFALSE); // send to load management
+				break;
+
+			default:
+				break;
+			}
 
 #if DEBUG_FREQ
 			printf("old freq %f\n", frequencyOld);
@@ -59,6 +96,7 @@ void frequencyViolationTask()
 	}
 }
 
+#define UART_DELAY 2
 /*
 	displaying information to UART
 */
@@ -88,32 +126,86 @@ void informationTask()
 			switch (incomingInformationItem.informationType)
 			{
 			case FREQ:
-				fprintf(serialUart, "f%f\r\n", incomingInformationItem.value);
+				fprintf(serialUart, "f%f\n", incomingInformationItem.value);
 				break;
 			case ROC:
-				fprintf(serialUart, "r%f\r\n", incomingInformationItem.value);
+				fprintf(serialUart, "r%f\n", incomingInformationItem.value);
 				break;
 			case MODE:
-				fprintf(serialUart, "M%d\r\n", (int)incomingInformationItem.value);
+				fprintf(serialUart, "M%d\n", (int)incomingInformationItem.value);
 				break;
 			case EXEC_TIME:
 				// calculate highest, lowest , average, total
 				break;
 			case ROC_THRESH:
 				// Rate of Change Threshold sent to UART
-				fprintf(serialUart, "R%f\r\n", incomingInformationItem.value);
+				fprintf(serialUart, "R%f\n", incomingInformationItem.value);
 				break;
 			case FREQ_TRHESH:
 				// Frequenecy Threshold sent to UART.
-				fprintf(serialUart, "F%f\r\n", incomingInformationItem.value);
+				fprintf(serialUart, "F%f\n", incomingInformationItem.value);
 				break;
 			default:
 				break;
 			}
 		}
-		vTaskDelay(5); // Sending too fast floods the labview program add a small delay
+		vTaskDelay(UART_DELAY); // Sending too fast floods the labview program, add a small delay
 	}
 	fclose(serialUart);
+}
+
+/*
+	Load Management Task
+*/
+void loadManagementTask()
+{
+	uint8_t switchConfig;
+	uint8_t litLeds = IORD(SLIDE_SWITCH_BASE, 0);
+	TickType_t startTick;
+	QViolationStruct incomingViolationItem;
+	QLedStruct outgoingLedItem;
+
+	enum state
+	{
+		INIT,
+		SHED,
+		UNSHED,
+		FINISH
+	};
+	enum state currentState = INIT;
+
+	while (1)
+	{
+		if (xQueueReceive(qViolation, &incomingViolationItem, portMAX_DELAY))
+		{
+			switch (currentState)
+			{
+			case INIT:
+				// switchConfig = IORD(SLIDE_SWITCH_BASE, 0);
+				litLeds = litLeds & litLeds - 1;
+				IOWR(SLIDE_SWITCH_BASE, 0, litLeds);
+				TickType_t a = xTaskGetTickCount();
+				printf("tick count from isr: %u \n", incomingViolationItem.isrTickCount);
+				printf("tick count after shed :%u\n", a);
+				uint32_t b = a - incomingViolationItem.isrTickCount;
+				break;
+
+			case SHED:
+				break;
+
+			case UNSHED:
+				break;
+
+			case FINISH:
+				break;
+
+			default:
+				break;
+			}
+			outgoingLedItem.ledr = litLeds;
+			xQueueSend(qLed, &outgoingLedItem, pdFALSE);
+		}
+	}
 }
 
 /*
@@ -256,7 +348,7 @@ void keyboardTask()
 					{
 						if (xSemaphoreTake(xMutexRoc, portMAX_DELAY))
 						{
-							rocThreshold = resultFloat;
+							rocThreshold = abs(resultFloat);
 							xSemaphoreGive(xMutexRoc);
 						}
 					}
@@ -286,13 +378,13 @@ void buttonTask()
 		{
 			if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
 			{
-				if (currentMode == NORMAL || currentMode == LOAD_MANAGEMENT)
+				if (currentMode == STABLE)
 				{
 					currentMode = MAINTANENCE;
 				}
-				else
+				else if (currentMode == MAINTANENCE)
 				{
-					currentMode = NORMAL;
+					currentMode = STABLE;
 				}
 				outgoingInfoItem.value = currentMode;
 				xSemaphoreGive(xMutexMode);
@@ -307,7 +399,7 @@ void createTasks()
 {
 	xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
 	xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-	xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &vSwitchPollingTaskHandle);
 	xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 	xTaskCreate(keyboardTask, "keyboardTask", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(buttonTask, "buttonTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
