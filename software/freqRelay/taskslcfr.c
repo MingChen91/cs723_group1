@@ -1,10 +1,3 @@
-/*
- * tasks.c
- *
- *  Created on: 15/04/2020
- *      Author: mingc
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,123 +9,118 @@
 #include "system.h" // for IORD()
 #include "taskslcfr.h"
 
+/*
+    Use:
+    Gets information from frequency relay ISR 
+    Calculates rate of change, frequency
+    
+    Starts Load Management task and sleeps switch polling if a violation has occured.     
+*/
 void frequencyViolationTask()
 {
-    QFreqStruct incomingFreqItem;
-    QInformationStruct outgoingInformationItem;
-    QViolationStruct outgoingViolationItem;
+    // Queues
+    QFreqStruct inFreqItem;
+    QInformationStruct outInformationItem;
+    QViolationStruct outViolationItem;
+    // Local Vars
     uint16_t sampleCountNew, sampleCountOld;
     uint8_t violationOccured;
     float frequencyNew, frequencyOld, rateOfChange;
-
-    // first run, collect data so have 2 data points to calculate averages
-    if (xQueueReceive(qFreq, &incomingFreqItem, portMAX_DELAY) == pdTRUE)
+    // First Run, Collect data so have 2 data points to calculate averages
+    if (xQueueReceive(qFreq, &inFreqItem, portMAX_DELAY))
     {
-        sampleCountNew = incomingFreqItem.adcSampleCount;
+        sampleCountNew = inFreqItem.adcSampleCount;
         frequencyNew = (SAMPLING_FREQUENCY / (float)sampleCountNew);
     }
 
+    // Loop
     while (1)
     {
-        // Wait for item in queue.
-        if (xQueueReceive(qFreq, &incomingFreqItem, portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(qFreq, &inFreqItem, portMAX_DELAY) == pdTRUE)
         {
-            // Keep track of 2 sets of frequency data.
+            // Keep track of new and old sets of frequency / ROC.
             sampleCountOld = sampleCountNew;
-            sampleCountNew = incomingFreqItem.adcSampleCount;
+            sampleCountNew = inFreqItem.adcSampleCount;
             frequencyOld = frequencyNew;
             frequencyNew = (SAMPLING_FREQUENCY / (float)sampleCountNew);
             rateOfChange = ((frequencyNew - frequencyOld) * 2 * SAMPLING_FREQUENCY) / (sampleCountNew + sampleCountOld);
 
-            // Send frequency data to display task
-            outgoingInformationItem.informationType = FREQ;
-            outgoingInformationItem.value = frequencyNew;
-            xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
+            // Send frequency/ROC data to information task
+            outInformationItem.informationType = FREQ;
+            outInformationItem.value = frequencyNew;
+            xQueueSend(qInformation, &outInformationItem, pdFALSE);
+            outInformationItem.informationType = ROC;
+            outInformationItem.value = rateOfChange;
+            xQueueSend(qInformation, &outInformationItem, pdFALSE);
 
-            outgoingInformationItem.informationType = ROC;
-            outgoingInformationItem.value = rateOfChange;
-            xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
+            // Calculated if there's a violation.
             violationOccured = ((frequencyNew < frequencyThreshold) || (abs(rateOfChange) > rocThreshold));
 
             switch (currentMode)
             {
+                // Stable Mode, Check if need to start load management
                 case STABLE:
                     if (violationOccured)
                     {
+                        // Change the mode and send to information task to display
                         if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
                         {
                             currentMode = LOAD_MANAGEMENT;
                             xSemaphoreGive(xMutexMode);
                         }
-                        outgoingInformationItem.informationType = MODE;
-                        outgoingInformationItem.value = currentMode;
-                        xQueueSend(qInformation, &outgoingInformationItem, pdFALSE);
-
-                        vTaskSuspend(vSwitchPollingTaskHandle); // sleep polling
-                        // Start task management
-                        // TODO if state == not created.
-                        xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-                        outgoingViolationItem.isrTickCount = incomingFreqItem.isrTickCount;
-                        outgoingViolationItem.violationOccured = violationOccured;
-                        xQueueSend(qViolation, &outgoingViolationItem, pdFALSE); // send to load management
+                        outInformationItem.informationType = MODE;
+                        outInformationItem.value = currentMode;
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
+                        // Sleep switchPollingTask and start load management task
+                        vTaskSuspend(vSwitchPollingTaskHandle);
+                        xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, vLoadManagementTaskHandle);
+                        // Pass the tickcount from the frequency ISR to loadManagementTask
+                        outViolationItem.isrTickCount = inFreqItem.isrTickCount;
+                        outViolationItem.violationOccured = violationOccured;
+                        xQueueSend(qViolation, &outViolationItem, pdFALSE);
                     }
                     break;
-
+                // Load Management just check if violation has occured and pass on isr tick count
                 case LOAD_MANAGEMENT:
-                    outgoingViolationItem.violationOccured = violationOccured;
-                    outgoingViolationItem.isrTickCount = incomingFreqItem.isrTickCount;
-#if TIMESTAMPS
-                    alt_32 tick = alt_timestamp();
-                    if (tick == 0)
-                    {
-                        alt_timestamp_start();
-                    }
-                    printf("current tick is %lu\n", tick);
-#endif
-                    xQueueSend(qViolation, &outgoingViolationItem, pdFALSE); // send to load management
+                    outViolationItem.violationOccured = violationOccured;
+                    outViolationItem.isrTickCount = inFreqItem.isrTickCount;
+                    xQueueSend(qViolation, &outViolationItem, pdFALSE);
                     break;
 
                 default:
                     break;
             }
-
-#if DEBUG_FREQ
-            printf("old freq %f\n", frequencyOld);
-            printf("new freq %f\n", frequencyNew);
-            printf("old count %d\n", sampleCountOld);
-            printf("new count %d\n", sampleCountNew);
-            printf("rate of change: %f\n\n", rateOfChange);
-#endif /* DEBUG_FREQ */
         }
     }
 }
 
 /*
-        displaying information to UART
+    Use: 
+    Retrieves information that needs to be displayed from different tasks
+    Keeps track of min, max, and past execution times from isr trigger to load shed.
+    Encodes the information and sends to serial port.
+
 */
 void informationTask()
 {
-    // create a seperate queue for serial
+    // Queues
     QInformationStruct incomingInformationItem;
+    // Serial UART init
     FILE *serialUart;
     serialUart = fopen("/dev/uart", "w");
     if (serialUart != NULL)
     {
-        printf("\n***********************\n");
         printf("   UART CONNECTED");
-        printf("\n***********************\n");
     }
     else
     {
-        printf("\n***************************\n");
         printf("  ERROR CONNECTING TO UART");
-        printf("\n***************************\n");
+        return;
     }
 
     while (1)
     {
-        if (xQueueReceive(qInformation, &incomingInformationItem,
-                          portMAX_DELAY))
+        if (xQueueReceive(qInformation, &incomingInformationItem, portMAX_DELAY))
         {
             switch (incomingInformationItem.informationType)
             {
@@ -143,18 +131,15 @@ void informationTask()
                     fprintf(serialUart, "r%f\n", incomingInformationItem.value);
                     break;
                 case MODE:
-                    fprintf(serialUart, "M%d\n",
-                            (int)incomingInformationItem.value);
+                    fprintf(serialUart, "M%d\n", (int)incomingInformationItem.value);
                     break;
                 case EXEC_TIME:
                     // calculate highest, lowest , average, total
                     break;
                 case ROC_THRESH:
-                    // Rate of Change Threshold sent to UART
                     fprintf(serialUart, "R%f\n", incomingInformationItem.value);
                     break;
                 case FREQ_TRHESH:
-                    // Frequenecy Threshold sent to UART.
                     fprintf(serialUart, "F%f\n", incomingInformationItem.value);
                     break;
                 default:
@@ -166,15 +151,21 @@ void informationTask()
 }
 
 /*
-        Load Management Task
+    Load Management Task
 */
 void loadManagementTask()
 {
+    // Vars
     uint8_t switchConfig;
     uint8_t litLeds = IORD(SLIDE_SWITCH_BASE, 0);
+    uint8_t litLedG;
     TickType_t startTick;
-    QViolationStruct incomingViolationItem;
-    QLedStruct outgoingLedItem;
+    // Queues
+    QViolationStruct inViolationItem;
+    QLedStruct outLedItem;
+    QInformationStruct outInformationItem;
+    uint32_t executionTime;
+    // State
     typedef enum
     {
         INIT,
@@ -186,83 +177,135 @@ void loadManagementTask()
 
     while (1)
     {
-        if (xQueueReceive(qViolation, &incomingViolationItem, portMAX_DELAY))
+        if (xQueueReceive(qViolation, &inViolationItem, portMAX_DELAY))
         {
             switch (currentState)
             {
                 case INIT:
-                    // switchConfig = IORD(SLIDE_SWITCH_BASE, 0);
-                    litLeds = litLeds & litLeds - 1;
-                    IOWR(SLIDE_SWITCH_BASE, 0, litLeds);
-                    // TickType_t a = xTaskGetTickCount();
-                    // printf("tick count from isr: %u \n", incomingViolationItem.isrTickCount);
-                    // printf("tick count after shed: %u\n", a);
-                    // uint32_t b = a - incomingViolationItem.isrTickCount;
+                    executionTime = xTaskGetTickCount() - inViolationItem.isrTickCount;
+                    if (executionTime > 200)
+                        printf("WARNING : Load shed took longer than 200ms\n");
+
+                    switchConfig = IORD(SLIDE_SWITCH_BASE, 0);
+                    outLedItem.ledr = litLeds & (litLeds - 1);
+                    outLedItem.ledg = litLeds - (outLedItem.ledr);
+                    litLeds = litLeds & (litLeds - 1);
+                    xQueueSend(qLed, &outLedItem, pdFALSE);
+                    currentState = SHED;
+                    startTick = xTaskGetTickCount();
                     break;
+
                 case SHED:
+                    if (inViolationItem.violationOccured)
+                    {
+                        if (xTaskGetTickCount() - startTick >= 500) // Unstable for 500ms
+                        {
+                            outLedItem.ledr = litLeds & (litLeds - 1);
+                            outLedItem.ledg = (litLeds - (outLedItem.ledr)) | IORD(GREEN_LEDS_BASE, 0);
+                            litLeds = litLeds & (litLeds - 1);
+                            xQueueSend(qLed, &outLedItem, pdFALSE);
+                            startTick = xTaskGetTickCount();
+                        }
+                    }
+                    else
+                    {
+                        currentState = UNSHED;
+                        startTick = xTaskGetTickCount();
+                    }
                     break;
+
                 case UNSHED:
+                    if (IORD(SLIDE_SWITCH_BASE, 0) == IORD(RED_LEDS_BASE, 0))
+                    {
+                        currentState = FINISH;
+                    }
+                    else if (!inViolationItem.violationOccured)
+                    {
+                        if (xTaskGetTickCount() - startTick >= 500) // Stable for 500ms
+                        {
+                            outLedItem.ledg = (IORD(GREEN_LEDS_BASE, 0) & (IORD(GREEN_LEDS_BASE, 0) - 1));
+                            outLedItem.ledr = (IORD(GREEN_LEDS_BASE, 0) - (outLedItem.ledg)) | IORD(RED_LEDS_BASE, 0);
+                            xQueueSend(qLed, &outLedItem, pdFALSE);
+                            startTick = xTaskGetTickCount();
+                        }
+                    }
+                    else
+                    {
+                        currentState = SHED;
+                        startTick = xTaskGetTickCount();
+                    }
+
                     break;
+
                 case FINISH:
+                    if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
+                    {
+                        currentMode = STABLE;
+                        outInformationItem.informationType = MODE;
+                        outInformationItem.value = currentMode;
+                        xSemaphoreGive(xMutexMode);
+                    }
+                    xQueueSend(qInformation, &outInformationItem, portMAX_DELAY);
+                    vTaskResume(vSwitchPollingTaskHandle);
+                    vTaskDelete(NULL);
                     break;
+
                 default:
                     break;
             }
-            outgoingLedItem.ledr = litLeds;
-            xQueueSend(qLed, &outgoingLedItem, pdFALSE);
         }
     }
 }
 
 /*
-        Polls the switchs
+    Polls the switchs every SWITCH_POLLING_DELAY
+    Sends the data to ledDriver task.
 */
 void switchPollingTask()
 {
-    QLedStruct sendLedQueueItem;
-    sendLedQueueItem.ledg = 0;
+    QLedStruct outgoingLedQueueItem;
+    outgoingLedQueueItem.ledg = 0;
     while (1)
     {
-        sendLedQueueItem.ledr = (IORD(SLIDE_SWITCH_BASE, 0) & 0xff); // bit masking to 8 bits
-        xQueueSend(qLed, &sendLedQueueItem, pdFALSE);
-        vTaskDelay(100);
+        outgoingLedQueueItem.ledr = (IORD(SLIDE_SWITCH_BASE, 0) & 0xff); // bit masking to 8 bits
+        xQueueSend(qLed, &outgoingLedQueueItem, pdFALSE);
+        vTaskDelay(SWITCH_POLLING_DELAY);
     }
 }
 
 /*
-        Driving LEDs
+    Gatekeeper task for writing to the LEDs.
+    Writes to the read and green leds ("connect and disconnect loads")
 */
 void ledDriverTask()
 {
-    QLedStruct receiveLedQueueItem;
+    QLedStruct inLedQueueItem;
     while (1)
     {
-        if (xQueueReceive(qLed, &receiveLedQueueItem, portMAX_DELAY))
+        if (xQueueReceive(qLed, &inLedQueueItem, portMAX_DELAY))
         {
-            IOWR(RED_LEDS_BASE, 0, receiveLedQueueItem.ledr);
-            IOWR(GREEN_LEDS_BASE, 0, receiveLedQueueItem.ledg);
+            IOWR(RED_LEDS_BASE, 0, inLedQueueItem.ledr);
+            IOWR(GREEN_LEDS_BASE, 0, inLedQueueItem.ledg);
         }
     }
 }
 
 /*
-        Building Freq and ROC from keyboard ISR individual chars
+    Constructs a Float from a stream of chars.
+    Only accept '0'-'9', '.' and null terminator.
 */
-#define BUFFER_SIZE 10
-int8_t buildNumber(float *resultFloat, char inputChar, char *charBuffer)
+int8_t constructFloat(float *resultFloat, char inputChar, char *charBuffer)
 {
-    // Keeps track of which which element in char array
+    // Static, persist through calls.
     static uint8_t bufferIndex = 0;
 
-    // Checks if input is valid, needs to be 0-9 , or '.' or null terminator
     if (((inputChar < '0') || (inputChar > '9')) && (inputChar != '.') && (inputChar != '\0'))
-        return 1;
+        return CONSTRUCT_FLOAT_NOT_DONE;
 
-    // New input gets put into the buffer
     charBuffer[bufferIndex] = inputChar;
 
     // Check if overflowing char buffer
-    if (bufferIndex >= BUFFER_SIZE - 1) // last char needed for null terminator
+    if (bufferIndex >= CHAR_BUFFER_SIZE - 1)
     {
         charBuffer[bufferIndex] = '\0';
     }
@@ -270,20 +313,19 @@ int8_t buildNumber(float *resultFloat, char inputChar, char *charBuffer)
     // End of string, convert to float
     if (charBuffer[bufferIndex] == '\0')
     {
-        // Convert the string to float
         *resultFloat = strtof(charBuffer, NULL);
-        // reset buffer
-        for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
+        // Reset buffer
+        for (bufferIndex = 0; bufferIndex < CHAR_BUFFER_SIZE; bufferIndex++)
         {
             charBuffer[bufferIndex] = '\0';
         }
         bufferIndex = 0;
-        return 0;
+        return CONSTRUCT_FLOAT_DONE;
     }
 
     printf("Buffer : %s\n", charBuffer);
     bufferIndex++;
-    return 1;
+    return CONSTRUCT_FLOAT_NOT_DONE;
 }
 
 /*
@@ -298,19 +340,21 @@ void keyboardTask()
         BUILDING_ROC
     };
     enum KeyBoardState state = IDLE;
-    unsigned char receieveKeyboardQueueItem;
-    char charBuffer[BUFFER_SIZE] = {'\0'};
+    unsigned char inKeyboardQueueItem;
+    QInformationStruct outInformationItem;
+    char charBuffer[CHAR_BUFFER_SIZE] = {'\0'};
     float resultFloat = 0;
     int8_t buildStatus;
-    QInformationStruct outGoingInformation;
+
     while (1)
     {
-        if (xQueueReceive(qKeyBoard, &receieveKeyboardQueueItem, portMAX_DELAY))
+        if (xQueueReceive(qKeyBoard, &inKeyboardQueueItem, portMAX_DELAY))
         {
             switch (state)
             {
+                // Getting a F or a R starts the float construction from chars
                 case IDLE:
-                    switch (receieveKeyboardQueueItem)
+                    switch (inKeyboardQueueItem)
                     {
                         case 'F':
                             printf("Building Frequency\n");
@@ -324,9 +368,11 @@ void keyboardTask()
                             break;
                     }
                     break;
+
+                // Keeps building freq until done, then send to info task and go back to idle
                 case BUILDING_FREQ:
-                    buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
-                    if (buildStatus == 0)
+                    buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
+                    if (buildStatus == CONSTRUCT_FLOAT_DONE)
                     {
                         if (xMutexFreq != NULL)
                         {
@@ -336,17 +382,17 @@ void keyboardTask()
                                 xSemaphoreGive(xMutexFreq);
                             }
                         }
-                        // send to information queue to read.
-                        outGoingInformation.informationType = FREQ_TRHESH;
-                        outGoingInformation.value = frequencyThreshold;
-                        xQueueSend(qInformation, &outGoingInformation, pdFALSE);
+                        outInformationItem.informationType = FREQ_TRHESH;
+                        outInformationItem.value = frequencyThreshold;
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
                         state = IDLE;
                     }
-                    // build temp buffer and change freq
                     break;
+
+                // Keeps building freq until done, then send to info task and go back to idle
                 case BUILDING_ROC:
-                    buildStatus = buildNumber(&resultFloat, receieveKeyboardQueueItem, charBuffer);
-                    if (buildStatus == 0)
+                    buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
+                    if (buildStatus == CONSTRUCT_FLOAT_DONE)
                     {
                         if (xMutexRoc != NULL)
                         {
@@ -356,13 +402,13 @@ void keyboardTask()
                                 xSemaphoreGive(xMutexRoc);
                             }
                         }
-                        outGoingInformation.informationType = ROC_THRESH;
-                        outGoingInformation.value = rocThreshold;
-                        xQueueSend(qInformation, &outGoingInformation, pdFALSE);
+                        outInformationItem.informationType = ROC_THRESH;
+                        outInformationItem.value = rocThreshold;
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
                         state = IDLE;
                     }
-                    // build temp buffer and change ROC
                     break;
+
                 default:
                     break;
             }
@@ -371,7 +417,7 @@ void keyboardTask()
 }
 
 /*
-        Button to change to maintence mode.
+    Button to change to maintence mode.
 */
 void buttonTask()
 {
@@ -402,16 +448,6 @@ void buttonTask()
 void createTasks()
 {
     xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-#if TIMESTAMPS
-    if (alt_timestamp_start() < 0)
-    {
-        printf("no time stamp device available\n");
-    }
-    else
-    {
-        printf("the frequency is %lu\n", alt_timestamp_freq());
-    }
-#endif
     xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
     xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &vSwitchPollingTaskHandle);
     xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);

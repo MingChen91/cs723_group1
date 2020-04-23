@@ -1,10 +1,3 @@
-/*
- * variables.h
- *
- *  Created on: 15/04/2020
- *      Author: mingc
- */
-
 #ifndef VARIABLES_H_
 #define VARIABLES_H_
 
@@ -15,14 +8,12 @@
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 /* Structs */
-// From frequency isr to violation task
 typedef struct
 {
     uint16_t adcSampleCount;
     TickType_t isrTickCount;
 } QFreqStruct;
 
-// queue going into leddriver
 typedef struct
 {
     uint8_t ledr; // 8 bit of leds
@@ -65,12 +56,15 @@ QueueHandle_t qInformation;
 QueueHandle_t qKeyBoard;
 QueueHandle_t qViolation;
 
+TaskHandle_t vLoadManagementTaskHandle;
 TaskHandle_t vSwitchPollingTaskHandle;
 
 SemaphoreHandle_t xMutexRoc;
 SemaphoreHandle_t xMutexFreq;
 SemaphoreHandle_t xMutexMode;
 SemaphoreHandle_t xButtonSemaphore;
+
+// Globals
 OpMode currentMode;
 float frequencyThreshold, rocThreshold;
 

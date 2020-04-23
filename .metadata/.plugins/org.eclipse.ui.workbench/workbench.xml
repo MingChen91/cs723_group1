@@ -48,7 +48,7 @@
 </editor>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="interrupts.c" partName="interrupts.c" path="D:/CS723/software/freqRelay/interrupts.c" title="interrupts.c" tooltip="freqRelay/interrupts.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/interrupts.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1871" selectionTopPixel="867"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1987" selectionTopPixel="640"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="taskslcfr.c" partName="taskslcfr.c" path="D:/CS723/software/freqRelay/taskslcfr.c" title="taskslcfr.c" tooltip="freqRelay/taskslcfr.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/freqRelay/taskslcfr.c"/>
@@ -115,10 +115,6 @@
 <view id="org.eclipse.debug.ui.RegisterView" partName="Registers"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
-<expanded>
-<category IMemento.internal.id="Errors"/>
-<category IMemento.internal.id="Warnings"/>
-</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="107" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="257" org.eclipse.ui.ide.resourceField="191" org.eclipse.ui.ide.severityAndDescriptionField="644"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -299,7 +295,7 @@
 <page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.17653221" ratioLeft="337" ratioRight="1572" relationship="2" relative="topLeft"/>
+<info part="org.eclipse.ui.editorss" ratio="0.26191723" ratioLeft="500" ratioRight="1409" relationship="2" relative="topLeft"/>
 <info folder="true" part="bottom" ratio="0.6638024" ratioLeft="618" ratioRight="313" relationship="4" relative="org.eclipse.ui.editorss">
 <folder activePageID="org.eclipse.ui.views.ProblemView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
@@ -440,13 +436,8 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/freertos/mpu_wrappers.h"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay_bsp/alt_sys_init.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay/freertos/queue.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/freqRelay_bsp/drivers/inc/altera_up_ps2_keyboard.h"/>
 </editors>
-<item historyLabel="taskslcfr.c" index="0">
-<position info="not_deleted" x="294" y="0"/>
-</item>
-<item historyLabel="taskslcfr.h" index="1">
-<position info="not_deleted" x="331" y="0"/>
-</item>
 <item historyLabel="variables.c" index="2">
 <position info="not_deleted" x="0" y="0"/>
 </item>
@@ -588,6 +579,12 @@
 <item historyLabel="queue.h" index="19">
 <position info="not_deleted" x="43307" y="17"/>
 </item>
+<item historyLabel="interrupts.c" index="10">
+<position info="not_deleted" x="1871" y="0"/>
+</item>
+<item historyLabel="altera_up_ps2_keyboard.h" index="20">
+<position info="not_deleted" x="0" y="0"/>
+</item>
 <item active="true" historyLabel="interrupts.c" index="10">
 <position info="not_deleted" x="1871" y="0"/>
 </item>
@@ -609,6 +606,9 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="altera_up_ps2_keyboard.h" tooltip="freqRelay_bsp/drivers/inc/altera_up_ps2_keyboard.h">
+<persistable path="/freqRelay_bsp/drivers/inc/altera_up_ps2_keyboard.h"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="queue.h" tooltip="freqRelay/freertos/queue.h">
 <persistable path="/freqRelay/freertos/queue.h"/>
 </file>
@@ -650,9 +650,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="helperFunctions.c" tooltip="freqRelay/helperFunctions.c">
 <persistable path="/freqRelay/helperFunctions.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="hello_world.c" tooltip="testBuilds/hello_world.c">
-<persistable path="/testBuilds/hello_world.c"/>
 </file>
 </mruList>
 </workbench>

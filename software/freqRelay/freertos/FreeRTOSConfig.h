@@ -125,6 +125,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelayUntil				0
 #define INCLUDE_vTaskDelay					1
 #define INCLUDE_uxTaskGetStackHighWaterMark	1
+#define INCLUDE_eTaskGetState               1
 
 /* The priority at which the tick interrupt runs.  This should probably be
 kept at 1. */
