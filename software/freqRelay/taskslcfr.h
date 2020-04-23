@@ -12,11 +12,12 @@
 
 // DEBUGS
 #define DEBUG_FREQ 0
+#define TIMESTAMPS 1
 
 /* FreeRTOS includes */
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/task.h"
 #include "variables.h"
 
 /* Functions*/

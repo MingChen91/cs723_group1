@@ -8,20 +8,21 @@
 
 void createVariables()
 {
-	// global variables
-	currentMode = STABLE;
-	frequencyThreshold = 60;
-	rocThreshold = 10;
-	// queues and semaphres
-	qFreq = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QFreqStruct)); // queue for from the freq isr to the freq violation
-	qLed = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QLedStruct));
-	qInformation = xQueueCreate(QUEUE_SIZE_BIG, sizeof(QInformationStruct));
-	qViolation = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QViolationStruct));
-	qKeyBoard = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(int));
+    // global variables
+    currentMode = STABLE;
+    frequencyThreshold = 60;
+    rocThreshold = 10;
+    // queues and semaphres
+    // queue for from the freq isr to the freq violation
+    qFreq = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QFreqStruct));
+    qLed = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QLedStruct));
+    qInformation = xQueueCreate(QUEUE_SIZE_BIG, sizeof(QInformationStruct));
+    qViolation = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QViolationStruct));
+    qKeyBoard = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(int));
 
-	xMutexFreq = xSemaphoreCreateMutex();
-	xMutexRoc = xSemaphoreCreateMutex();
-	xMutexMode = xSemaphoreCreateMutex();
+    xMutexFreq = xSemaphoreCreateMutex();
+    xMutexRoc = xSemaphoreCreateMutex();
+    xMutexMode = xSemaphoreCreateMutex();
 
-	xButtonSemaphore = xSemaphoreCreateCounting(5, 0);
+    xButtonSemaphore = xSemaphoreCreateCounting(5, 0);
 }

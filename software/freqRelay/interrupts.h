@@ -9,10 +9,9 @@
 #define INTERRUPTS_H_
 #define ENTER_KEY 0x5a
 
-
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/task.h"
 
 void registerInterrupts();
 

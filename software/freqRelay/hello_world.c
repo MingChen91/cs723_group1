@@ -14,15 +14,15 @@
  *
  */
 
-#include <stdio.h>
-#include "taskslcfr.h"
 #include "interrupts.h"
+#include "taskslcfr.h"
+#include <stdio.h>
 
 int main()
 {
-	createTasks();
-	createVariables();
-	registerInterrupts();
-	vTaskStartScheduler();
-	return 0;
+    createTasks();
+    createVariables();
+    registerInterrupts();
+    vTaskStartScheduler();
+    return 0;
 }

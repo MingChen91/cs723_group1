@@ -21,7 +21,11 @@ conditionViolationTask(){
 loadmanagement(){
     enum State ( init, shed, unshed, finish)
     
-    int switchconfig; 
+    
+    int stableConfig; 
+    CurrentSwitchconfig
+    currentLED 
+    
 
     tickType_t startTick
     switch (state) {

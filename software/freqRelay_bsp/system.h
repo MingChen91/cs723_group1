@@ -54,7 +54,6 @@
 /* Include definitions from linker script generator */
 #include "linker.h"
 
-
 /*
  * CPU configuration
  *
@@ -89,7 +88,6 @@
 #define ALT_CPU_NUM_OF_SHADOW_REG_SETS 0
 #define ALT_CPU_RESET_ADDR 0x1000000
 
-
 /*
  * CPU configuration (with legacy prefix - don't use these anymore)
  *
@@ -121,7 +119,6 @@
 #define NIOS2_NUM_OF_SHADOW_REG_SETS 0
 #define NIOS2_RESET_ADDR 0x1000000
 
-
 /*
  * Define for each module class mastered by the CPU
  *
@@ -143,7 +140,6 @@
 #define __ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA
 #define __FREQUENCY_ANALYSER
 #define __SEVEN_SEG
-
 
 /*
  * System configuration
@@ -180,7 +176,6 @@
 #define ALT_STDOUT_TYPE "altera_avalon_jtag_uart"
 #define ALT_SYSTEM_NAME "nios2"
 
-
 /*
  * character_lcd configuration
  *
@@ -193,7 +188,6 @@
 #define CHARACTER_LCD_NAME "/dev/character_lcd"
 #define CHARACTER_LCD_SPAN 16
 #define CHARACTER_LCD_TYPE "altera_avalon_lcd_16207"
-
 
 /*
  * flash_controller configuration
@@ -213,7 +207,6 @@
 #define FLASH_CONTROLLER_TYPE "altera_generic_tristate_controller"
 #define FLASH_CONTROLLER_WAIT_VALUE 160
 
-
 /*
  * frequency_analyser configuration
  *
@@ -226,7 +219,6 @@
 #define FREQUENCY_ANALYSER_NAME "/dev/frequency_analyser"
 #define FREQUENCY_ANALYSER_SPAN 4
 #define FREQUENCY_ANALYSER_TYPE "frequency_analyser"
-
 
 /*
  * green_leds configuration
@@ -254,7 +246,6 @@
 #define GREEN_LEDS_SPAN 32
 #define GREEN_LEDS_TYPE "altera_avalon_pio"
 
-
 /*
  * hal configuration
  *
@@ -262,8 +253,7 @@
 
 #define ALT_MAX_FD 32
 #define ALT_SYS_CLK TIMER1MS
-#define ALT_TIMESTAMP_CLK none
-
+#define ALT_TIMESTAMP_CLK TIMER1US // default : none
 
 /*
  * jtag_uart configuration
@@ -281,7 +271,6 @@
 #define JTAG_UART_TYPE "altera_avalon_jtag_uart"
 #define JTAG_UART_WRITE_DEPTH 512
 #define JTAG_UART_WRITE_THRESHOLD 8
-
 
 /*
  * onchip_memory configuration
@@ -311,7 +300,6 @@
 #define ONCHIP_MEMORY_TYPE "altera_avalon_onchip_memory2"
 #define ONCHIP_MEMORY_WRITABLE 1
 
-
 /*
  * ps2 configuration
  *
@@ -324,7 +312,6 @@
 #define PS2_NAME "/dev/ps2"
 #define PS2_SPAN 8
 #define PS2_TYPE "altera_up_avalon_ps2"
-
 
 /*
  * push_button configuration
@@ -352,7 +339,6 @@
 #define PUSH_BUTTON_SPAN 16
 #define PUSH_BUTTON_TYPE "altera_avalon_pio"
 
-
 /*
  * red_leds configuration
  *
@@ -378,7 +364,6 @@
 #define RED_LEDS_RESET_VALUE 0
 #define RED_LEDS_SPAN 32
 #define RED_LEDS_TYPE "altera_avalon_pio"
-
 
 /*
  * sdram configuration
@@ -418,7 +403,6 @@
 #define SDRAM_T_RP 20.0
 #define SDRAM_T_WR 14.0
 
-
 /*
  * seven_seg configuration
  *
@@ -431,7 +415,6 @@
 #define SEVEN_SEG_NAME "/dev/seven_seg"
 #define SEVEN_SEG_SPAN 4
 #define SEVEN_SEG_TYPE "seven_seg"
-
 
 /*
  * slide_switch configuration
@@ -459,7 +442,6 @@
 #define SLIDE_SWITCH_SPAN 16
 #define SLIDE_SWITCH_TYPE "altera_avalon_pio"
 
-
 /*
  * sram configuration
  *
@@ -472,7 +454,6 @@
 #define SRAM_NAME "/dev/sram"
 #define SRAM_SPAN 2097152
 #define SRAM_TYPE "altera_up_avalon_sram"
-
 
 /*
  * system_id configuration
@@ -488,7 +469,6 @@
 #define SYSTEM_ID_SPAN 8
 #define SYSTEM_ID_TIMESTAMP 1393900972
 #define SYSTEM_ID_TYPE "altera_avalon_sysid_qsys"
-
 
 /*
  * timer1ms configuration
@@ -515,7 +495,6 @@
 #define TIMER1MS_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER1MS_TYPE "altera_avalon_timer"
 
-
 /*
  * timer1us configuration
  *
@@ -524,7 +503,7 @@
 #define ALT_MODULE_CLASS_timer1us altera_avalon_timer
 #define TIMER1US_ALWAYS_RUN 0
 #define TIMER1US_BASE 0x43020
-#define TIMER1US_COUNTER_SIZE 32
+#define TIMER1US_COUNTER_SIZE 321
 #define TIMER1US_FIXED_PERIOD 0
 #define TIMER1US_FREQ 100000000
 #define TIMER1US_IRQ 6
@@ -540,7 +519,6 @@
 #define TIMER1US_TICKS_PER_SEC 1000000.0
 #define TIMER1US_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER1US_TYPE "altera_avalon_timer"
-
 
 /*
  * uart configuration
@@ -566,7 +544,6 @@
 #define UART_USE_CTS_RTS 0
 #define UART_USE_EOP_REGISTER 0
 
-
 /*
  * video_character_buffer_with_dma_avalon_char_buffer_slave configuration
  *
@@ -580,7 +557,6 @@
 #define VIDEO_CHARACTER_BUFFER_WITH_DMA_AVALON_CHAR_BUFFER_SLAVE_SPAN 8192
 #define VIDEO_CHARACTER_BUFFER_WITH_DMA_AVALON_CHAR_BUFFER_SLAVE_TYPE "altera_up_avalon_video_character_buffer_with_dma"
 
-
 /*
  * video_character_buffer_with_dma_avalon_char_control_slave configuration
  *
@@ -593,7 +569,6 @@
 #define VIDEO_CHARACTER_BUFFER_WITH_DMA_AVALON_CHAR_CONTROL_SLAVE_NAME "/dev/video_character_buffer_with_dma_avalon_char_control_slave"
 #define VIDEO_CHARACTER_BUFFER_WITH_DMA_AVALON_CHAR_CONTROL_SLAVE_SPAN 8
 #define VIDEO_CHARACTER_BUFFER_WITH_DMA_AVALON_CHAR_CONTROL_SLAVE_TYPE "altera_up_avalon_video_character_buffer_with_dma"
-
 
 /*
  * video_pixel_buffer_dma configuration

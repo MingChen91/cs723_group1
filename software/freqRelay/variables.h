@@ -12,50 +12,50 @@
 #define QUEUE_SIZE_BIG 100
 
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/semphr.h"
+#include "freertos/task.h"
 /* Structs */
 // From frequency isr to violation task
 typedef struct
 {
-	uint16_t adcSampleCount;
-	TickType_t isrTickCount;
+    uint16_t adcSampleCount;
+    TickType_t isrTickCount;
 } QFreqStruct;
 
 // queue going into leddriver
 typedef struct
 {
-	uint8_t ledr; // 8 bit of leds
-	uint8_t ledg;
+    uint8_t ledr; // 8 bit of leds
+    uint8_t ledg;
 } QLedStruct;
 
 typedef struct
 {
-	uint8_t violationOccured;
-	TickType_t isrTickCount;
+    uint8_t violationOccured;
+    TickType_t isrTickCount;
 } QViolationStruct;
 
 typedef enum
 {
-	FREQ = 1,
-	ROC = 2,
-	MODE = 3,
-	EXEC_TIME = 4,
-	ROC_THRESH = 5,
-	FREQ_TRHESH = 6
+    FREQ = 1,
+    ROC = 2,
+    MODE = 3,
+    EXEC_TIME = 4,
+    ROC_THRESH = 5,
+    FREQ_TRHESH = 6
 } InformationType;
 
 typedef struct
 {
-	InformationType informationType;
-	float value;
+    InformationType informationType;
+    float value;
 } QInformationStruct;
 
 typedef enum
 {
-	STABLE = 1,
-	LOAD_MANAGEMENT = 2,
-	MAINTANENCE = 3
+    STABLE = 1,
+    LOAD_MANAGEMENT = 2,
+    MAINTANENCE = 3
 } OpMode;
 
 /******** Variables ********/
