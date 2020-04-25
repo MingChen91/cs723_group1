@@ -17,6 +17,6 @@ void createVariables()
 
     // Global variables
     currentMode = STABLE;
-    frequencyThreshold = 60;
+    frequencyThreshold = 70;
     rocThreshold = 30;
 }

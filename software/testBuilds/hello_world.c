@@ -1,56 +1,68 @@
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <system.h>
 
-#include "io.h"
-#include "altera_up_avalon_ps2.h"
-#include "altera_up_ps2_keyboard.h"
+#include "altera_avalon_pio_regs.h" // to use PIO functions
 #include "sys/alt_irq.h"
 
-void ps2_isr(void *context, alt_u32 id)
-{
-	char ascii;
-	int status = 0;
-	unsigned char key = 0;
-	KB_CODE_TYPE decode_mode;
-	status = decode_scancode(context, &decode_mode, &key, &ascii);
-	if (status == 0) //success
-	{
-		// print out the result
-		switch (decode_mode)
-		{
-		case KB_ASCII_MAKE_CODE:
-			printf("ASCII   : %x\n", ascii);
-			break;
-		case KB_LONG_BINARY_MAKE_CODE:
-			// do nothing
-		case KB_BINARY_MAKE_CODE:
-			printf("MAKE CODE : %x\n", key);
-			break;
-		case KB_BREAK_CODE:
-			// do nothing
-		default:
-			printf("DEFAULT   : %x\n", key);
-			break;
-		}
-		IOWR(SEVEN_SEG_BASE, 0, ascii);
-	}
-}
+#define RED_LEDS_CURRENT 0xff & IORD(RED_LEDS_BASE, 0)
+#define GREEN_LEDS_CURRENT 0xff & IORD(GREEN_LEDS_BASE, 0)
+#define SLIDE_SWITCH_CURRENT 0xff & IORD(SLIDE_SWITCH_BASE, 0)
+
 int main()
 {
-	alt_up_ps2_dev *ps2_device = alt_up_ps2_open_dev(PS2_NAME);
+    printf("Test Nios Build\n");
 
-	if (ps2_device == NULL)
-	{
-		printf("can't find PS/2 device\n");
-		return 1;
-	}
+    uint8_t swPosMax, swPosCurrent, swPosPrev;
+    uint8_t redState, greenState;
 
-	alt_up_ps2_clear_fifo(ps2_device);
+    swPosMax = SLIDE_SWITCH_CURRENT;
+    swPosPrev = SLIDE_SWITCH_CURRENT;
+    swPosCurrent = SLIDE_SWITCH_CURRENT;
 
-	alt_irq_register(PS2_IRQ, ps2_device, ps2_isr);
-	// register the PS/2 interrupt
-	IOWR_8DIRECT(PS2_BASE, 4, 1);
-	while (1)
-	{
-	}
-	return 0;
+    IOWR(GREEN_LEDS_BASE, 0, 0);
+    IOWR(RED_LEDS_BASE, 0, swPosMax);
+    int mode;
+
+    while (1)
+    {
+        // Keep track of switch positions
+        swPosPrev = swPosCurrent;
+        swPosCurrent = SLIDE_SWITCH_CURRENT;
+        // Detect if switchs havve
+        if (swPosCurrent != swPosPrev)
+        {
+            // Can turn things off but not on.
+            swPosMax = swPosMax & swPosCurrent;
+            if (mode == 0)
+                IOWR(RED_LEDS_BASE, 0, (swPosMax & RED_LEDS_CURRENT));
+        }
+
+        else if (mode == 0) // turn off
+        {
+            redState = RED_LEDS_CURRENT;
+            IOWR(RED_LEDS_BASE, 0, redState & (redState - 1));
+            greenState = GREEN_LEDS_CURRENT;
+            IOWR(GREEN_LEDS_BASE, 0, (greenState | (redState & ~(RED_LEDS_CURRENT))));
+        }
+        else if (mode == 1) // turn on
+        {
+            //turn reds on
+            redState = RED_LEDS_CURRENT;
+
+            // 11111111
+            int temp = ~(SLIDE_SWITCH_CURRENT);
+            int number = (redState | temp);
+
+            // printf("temp3 %x \n", temp3);
+
+            IOWR(RED_LEDS_BASE, 0, ((number | (number + 1)) & SLIDE_SWITCH_CURRENT));
+
+            //     //turn greens off
+            greenState = GREEN_LEDS_CURRENT;
+            IOWR(GREEN_LEDS_BASE, 0, (greenState & (redState & ~(RED_LEDS_CURRENT))));
+        }
+    }
+    return 0;
 }

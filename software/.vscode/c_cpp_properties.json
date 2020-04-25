@@ -2,8 +2,14 @@
     "configurations": [
         {
             "name": "Win32",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "C:/altera/13.0/quartus/bin/cygwin/**"
+                ]
+            },
             "includePath": [
-                "${workspaceFolder}/**" ,
+                "${workspaceFolder}/**",
                 "C:/altera/13.0/quartus/bin/cygwin/**"
             ],
             "defines": [

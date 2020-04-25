@@ -2,7 +2,7 @@
 #define VARIABLES_H_
 
 #define QUEUE_SIZE_SMALL 20
-#define QUEUE_SIZE_BIG 100
+#define QUEUE_SIZE_BIG   100
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"

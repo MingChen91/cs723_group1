@@ -80,3 +80,34 @@ while 1{
         }
     }
 }
+
+CurrentSwitchPos
+PrevSwitchPosition
+RedState
+GreenState
+
+
+while (1)
+    PrevSwitchPosition = CurrentSwitchPos
+    CurrentSwitchconfig = readswitch
+    
+    if (CurrentSwitchPos != PrevSwitchPosition) // something got turned off
+        set ledR = init & not current (turns ones off but not on)
+        reset timer
+
+case init  
+    take initialSwitchPositionm
+    initialSwitchPosition turn off 1 
+    GreenState = initialSwitchPosition turn on 1
+
+case shed
+    
+    else if 500ms
+        Turn 1 more off from current led
+        turn 1 more on from red current
+
+case unshed
+    if (CurrentSwitchPos != PrevSwitchPosition)
+        set ledR = previous & not current (turns ones off but not on)
+        reset timer
+    else if 500 ms 

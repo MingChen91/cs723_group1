@@ -45,34 +45,34 @@ extern "C"
 #error SYSTEM_BUS_WIDTH undefined
 #endif
 
-/* Dynamic bus access functions */
+    /* Dynamic bus access functions */
 
 #define __IO_CALC_ADDRESS_DYNAMIC(BASE, OFFSET) \
-  ((void *)(((alt_u8*)BASE) + (OFFSET)))
+    ((void *)(((alt_u8 *)BASE) + (OFFSET)))
 
 #define IORD_32DIRECT(BASE, OFFSET) \
-  __builtin_ldwio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)))
+    __builtin_ldwio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)))
 #define IORD_16DIRECT(BASE, OFFSET) \
-  __builtin_ldhuio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)))
+    __builtin_ldhuio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)))
 #define IORD_8DIRECT(BASE, OFFSET) \
-  __builtin_ldbuio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)))
+    __builtin_ldbuio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)))
 
 #define IOWR_32DIRECT(BASE, OFFSET, DATA) \
-  __builtin_stwio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)), (DATA))
+    __builtin_stwio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)), (DATA))
 #define IOWR_16DIRECT(BASE, OFFSET, DATA) \
-  __builtin_sthio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)), (DATA))
+    __builtin_sthio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)), (DATA))
 #define IOWR_8DIRECT(BASE, OFFSET, DATA) \
-  __builtin_stbio (__IO_CALC_ADDRESS_DYNAMIC ((BASE), (OFFSET)), (DATA))
+    __builtin_stbio(__IO_CALC_ADDRESS_DYNAMIC((BASE), (OFFSET)), (DATA))
 
-/* Native bus access functions */
+    /* Native bus access functions */
 
 #define __IO_CALC_ADDRESS_NATIVE(BASE, REGNUM) \
-  ((void *)(((alt_u8*)BASE) + ((REGNUM) * (SYSTEM_BUS_WIDTH/8))))
+    ((void *)(((alt_u8 *)BASE) + ((REGNUM) * (SYSTEM_BUS_WIDTH / 8))))
 
 #define IORD(BASE, REGNUM) \
-  __builtin_ldwio (__IO_CALC_ADDRESS_NATIVE ((BASE), (REGNUM)))
+    __builtin_ldwio(__IO_CALC_ADDRESS_NATIVE((BASE), (REGNUM)))
 #define IOWR(BASE, REGNUM, DATA) \
-  __builtin_stwio (__IO_CALC_ADDRESS_NATIVE ((BASE), (REGNUM)), (DATA))
+    __builtin_stwio(__IO_CALC_ADDRESS_NATIVE((BASE), (REGNUM)), (DATA))
 
 #ifdef __cplusplus
 }
