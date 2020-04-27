@@ -914,7 +914,7 @@ int main()
      31c:	00bfffc4 	movi	r2,-1
      320:	1884703a 	and	r2,r3,r2
      324:	e0bffe45 	stb	r2,-7(fp)
-            IOWR(RED_LEDS_BASE, 0, redState & redState - 1);
+            IOWR(RED_LEDS_BASE, 0, redState & (redState - 1));
      328:	e0fffe43 	ldbu	r3,-7(fp)
      32c:	e0bffe43 	ldbu	r2,-7(fp)
      330:	10bfffc4 	addi	r2,r2,-1
@@ -976,7 +976,7 @@ int main()
 
             // printf("temp3 %x \n", temp3);
 
-            IOWR(RED_LEDS_BASE, 0, ((number | number + 1) & SLIDE_SWITCH_CURRENT));
+            IOWR(RED_LEDS_BASE, 0, ((number | (number + 1)) & SLIDE_SWITCH_CURRENT));
      3e4:	e0bffb17 	ldw	r2,-20(fp)
      3e8:	10c00044 	addi	r3,r2,1
      3ec:	e0bffb17 	ldw	r2,-20(fp)

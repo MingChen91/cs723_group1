@@ -24,7 +24,7 @@
 void buttonIsr()
 {
     // gives a semaphore for the button task
-    xSemaphoreGiveFromISR(xButtonSemaphore, NULL);
+    xSemaphoreGiveFromISR(SemaphoreButton, NULL);
     IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7);
 }
 

@@ -56,39 +56,39 @@ void frequencyViolationTask()
 
             switch (currentMode)
             {
-            // Stable Mode, Check if need to start load management
-            case STABLE:
-                if (violationOccured)
-                {
-                    // Change the mode and send to information task to display
-                    if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
+                // Stable Mode, Check if need to start load management
+                case STABLE:
+                    if (violationOccured)
                     {
-                        currentMode = LOAD_MANAGEMENT;
-                        xSemaphoreGive(xMutexMode);
+                        // Change the mode and send to information task to display
+                        if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+                        {
+                            currentMode = LOAD_MANAGEMENT;
+                            xSemaphoreGive(MutexMode);
+                        }
+                        outInformationItem.informationType = MODE;
+                        outInformationItem.value = currentMode;
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
+                        // Sleep switchPollingTask and start load management task
+                        vTaskSuspend(SwitchPollingTaskHandle);
+                        xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, LoadManagementTaskHandle);
+                        // Pass the tickcount from the frequency ISR to
+                        // loadManagementTask
+                        outViolationItem.isrTickCount = inFreqItem.isrTickCount;
+                        outViolationItem.violationOccured = violationOccured;
+                        xQueueSend(qViolation, &outViolationItem, pdFALSE);
                     }
-                    outInformationItem.informationType = MODE;
-                    outInformationItem.value = currentMode;
-                    xQueueSend(qInformation, &outInformationItem, pdFALSE);
-                    // Sleep switchPollingTask and start load management task
-                    vTaskSuspend(vSwitchPollingTaskHandle);
-                    xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, vLoadManagementTaskHandle);
-                    // Pass the tickcount from the frequency ISR to
-                    // loadManagementTask
-                    outViolationItem.isrTickCount = inFreqItem.isrTickCount;
+                    break;
+                // Load Management just check if violation has occured and pass on
+                // isr tick count
+                case LOAD_MANAGEMENT:
                     outViolationItem.violationOccured = violationOccured;
+                    outViolationItem.isrTickCount = inFreqItem.isrTickCount;
                     xQueueSend(qViolation, &outViolationItem, pdFALSE);
-                }
-                break;
-            // Load Management just check if violation has occured and pass on
-            // isr tick count
-            case LOAD_MANAGEMENT:
-                outViolationItem.violationOccured = violationOccured;
-                outViolationItem.isrTickCount = inFreqItem.isrTickCount;
-                xQueueSend(qViolation, &outViolationItem, pdFALSE);
-                break;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
     }
@@ -124,26 +124,26 @@ void informationTask()
         {
             switch (incomingInformationItem.informationType)
             {
-            case FREQ:
-                fprintf(serialUart, "f%f\n", incomingInformationItem.value);
-                break;
-            case ROC:
-                fprintf(serialUart, "r%f\n", incomingInformationItem.value);
-                break;
-            case MODE:
-                fprintf(serialUart, "M%d\n", (int)incomingInformationItem.value);
-                break;
-            case EXEC_TIME:
-                // calculate highest, lowest , average, total
-                break;
-            case ROC_THRESH:
-                fprintf(serialUart, "R%f\n", incomingInformationItem.value);
-                break;
-            case FREQ_TRHESH:
-                fprintf(serialUart, "F%f\n", incomingInformationItem.value);
-                break;
-            default:
-                break;
+                case FREQ:
+                    fprintf(serialUart, "f%f\n", incomingInformationItem.value);
+                    break;
+                case ROC:
+                    fprintf(serialUart, "r%f\n", incomingInformationItem.value);
+                    break;
+                case MODE:
+                    fprintf(serialUart, "M%d\n", (int)incomingInformationItem.value);
+                    break;
+                case EXEC_TIME:
+                    // calculate highest, lowest , average, total
+                    break;
+                case ROC_THRESH:
+                    fprintf(serialUart, "R%f\n", incomingInformationItem.value);
+                    break;
+                case FREQ_TRHESH:
+                    fprintf(serialUart, "F%f\n", incomingInformationItem.value);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -198,7 +198,7 @@ void loadManagementTask()
     swPosMax = SLIDE_SWITCH_CURRENT;
     swPosPrev = SLIDE_SWITCH_CURRENT;
     swPosCurrent = SLIDE_SWITCH_CURRENT;
-    outLedItem.ledg = 0;
+    outLedItem.ledG = 0;
 
     while (1)
     {
@@ -214,14 +214,14 @@ void loadManagementTask()
                 if (currentState == DISCONNECT_LOAD)
                 {
                     loadChange = (swPosCurrent ^ swPosPrev);            // Which one got turned changed.
-                    outLedItem.ledg = GREEN_LEDS_CURRENT & ~loadChange; // Turn off any matching green.
+                    outLedItem.ledG = GREEN_LEDS_CURRENT & ~loadChange; // Turn off any matching green.
                     swPosMax = swPosMax & swPosCurrent;                 // Mask switch with the max allowed switch positions, allows turn load off but not on.
                 }
                 else if (currentState == CONNECT_LOAD)
                 {
                     swPosMax = swPosCurrent; // In reconnect mode allow more to go up.
                 }
-                outLedItem.ledr = (swPosMax & loadState);
+                outLedItem.ledR = (swPosMax & loadState);
                 xQueueSend(qLed, &outLedItem, portMAX_DELAY);
 
                 // Reset the 500 ms count because conditions have changed
@@ -231,93 +231,96 @@ void loadManagementTask()
             // State machine, for disconnecting and reconnecting loads
             switch (currentState)
             {
-            // Immediately shed one load and go to Shed load state where loads will continue to shed every 500ms if unstable
-            case INIT:
-                // Check execution time
-                executionTime = xTaskGetTickCount() - inViolationItem.isrTickCount;
-                if (executionTime > EXEC_TIME_LIMIT)
-                    printf("WARNING : Load shed took longer than 200ms\n");
-                // Shed one load immediately
-                loadState = RED_LEDS_CURRENT;                          // Grab current load status
-                loadNew = (loadState & (loadState - 1));               // Turns off right most set bit (load)
-                outLedItem.ledr = loadNew;                             // Add to queue
-                loadChange = loadState ^ loadNew;                      // Which load got turned off
-                outLedItem.ledg = ((GREEN_LEDS_CURRENT) | loadChange); // Turn on the correponding green led
-                xQueueSend(qLed, &outLedItem, portMAX_DELAY);          // Send to queue
-                currentState = DISCONNECT_LOAD;
-                loadManagementDelayStartTick = xTaskGetTickCount();
-                break;
-
-            // Shed a load every 500 if unstable
-            case DISCONNECT_LOAD:
-                if (inViolationItem.violationOccured) // Still unstable
-                {
-                    if (xTaskGetTickCount() - loadManagementDelayStartTick >= LOAD_MANAGEMENT_DELAY)
-                    {
-                        loadState = RED_LEDS_CURRENT; // Grab current load status
-                        if (loadChange == 0)          // dont go any lower after 0
-                            break;
-                        loadNew = (loadState & (loadState - 1));               // Turns off right most set bit (load)
-                        outLedItem.ledr = loadNew;                             // Add to queue
-                        loadChange = loadState ^ loadNew;                      // Which load got turned off
-                        outLedItem.ledg = ((GREEN_LEDS_CURRENT) | loadChange); // Turn on the corresponding green led
-                        xQueueSend(qLed, &outLedItem, portMAX_DELAY);
-                        loadManagementDelayStartTick = xTaskGetTickCount();
-                    }
-                }
-                else // Changed to stable
-                {
-                    currentState = CONNECT_LOAD;
+                // Immediately shed one load and go to Shed load state where loads will continue to shed every 500ms if unstable
+                case INIT:
+                    // Check execution time
+                    executionTime = xTaskGetTickCount() - inViolationItem.isrTickCount;
+                    printf("execution time: %lu\n", executionTime);
+                    if (executionTime > EXEC_TIME_LIMIT)
+                        printf("WARNING : Load shed took longer than 200ms\n");
+                    // Shed one load immediately
+                    loadState = RED_LEDS_CURRENT;                          // Grab current load status
+                    loadNew = (loadState & (loadState - 1));               // Turns off right most set bit (load)
+                    outLedItem.ledR = loadNew;                             // Add to queue
+                    loadChange = loadState ^ loadNew;                      // Which load got turned off
+                    outLedItem.ledG = ((GREEN_LEDS_CURRENT) | loadChange); // Turn on the correponding green led
+                    xQueueSend(qLed, &outLedItem, portMAX_DELAY);          // Send to queue
+                    currentState = DISCONNECT_LOAD;
                     loadManagementDelayStartTick = xTaskGetTickCount();
-                }
-                break;
+                    break;
 
-            // Reconnect loads, including any switches which have been turned on during load management
-            case CONNECT_LOAD:
-                if (!inViolationItem.violationOccured) // Still stable
-                {
-                    if (xTaskGetTickCount() - loadManagementDelayStartTick >= LOAD_MANAGEMENT_DELAY)
+                // Shed a load every 500 if unstable
+                case DISCONNECT_LOAD:
+                    if (inViolationItem.violationOccured) // Still unstable
                     {
-                        loadState = RED_LEDS_CURRENT;
-                        if (SLIDE_SWITCH_CURRENT == loadState) // All loads have been turned back on for 500 ms
+                        // if already all turned off do nothing
+                        if (xTaskGetTickCount() - loadManagementDelayStartTick >= LOAD_MANAGEMENT_DELAY)
                         {
-                            currentState = FINISH;
-                        }
-                        else
-                        {
-                            uint8_t skip = (loadState | ~(SLIDE_SWITCH_CURRENT));         // Skip loads that are already on and if the switch is off.
-                            loadNew = (setLeftMostUnsetBit(skip) & SLIDE_SWITCH_CURRENT); // Turn on the highest priority, and mask with switches
-                            outLedItem.ledr = loadNew;                                    // Add to queue
-                            loadChange = loadNew ^ loadState
-                            ;                             // Which load was turned on
-                            outLedItem.ledg = (GREEN_LEDS_CURRENT & ~(loadChange));       // Turn off the corresponding green led
+                            executionTime = xTaskGetTickCount() - inViolationItem.isrTickCount;
+                            printf("execution time: %lu\n", executionTime);
+                            loadState = RED_LEDS_CURRENT; // Grab current load status
+                            if (loadChange == 0)          // dont go any lower after 0
+                                break;
+                            loadNew = (loadState & (loadState - 1));               // Turns off right most set bit (load)
+                            outLedItem.ledR = loadNew;                             // Add to queue
+                            loadChange = loadState ^ loadNew;                      // Which load got turned off
+                            outLedItem.ledG = ((GREEN_LEDS_CURRENT) | loadChange); // Turn on the corresponding green led
                             xQueueSend(qLed, &outLedItem, portMAX_DELAY);
                             loadManagementDelayStartTick = xTaskGetTickCount();
                         }
                     }
-                }
-                else // Changed to unstable
-                {
-                    currentState = DISCONNECT_LOAD;
-                    loadManagementDelayStartTick = xTaskGetTickCount();
-                }
-                break;
+                    else // Changed to stable
+                    {
+                        currentState = CONNECT_LOAD;
+                        loadManagementDelayStartTick = xTaskGetTickCount();
+                    }
+                    break;
 
-            case FINISH:
-                if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
-                {
-                    currentMode = STABLE;
-                    outInformationItem.informationType = MODE;
-                    outInformationItem.value = currentMode;
-                    xSemaphoreGive(xMutexMode);
-                }
-                xQueueSend(qInformation, &outInformationItem, portMAX_DELAY);
-                vTaskResume(vSwitchPollingTaskHandle);
-                vTaskDelete(NULL);
-                break;
+                // Reconnect loads, including any switches which have been turned on during load management
+                case CONNECT_LOAD:
+                    if (!inViolationItem.violationOccured) // Still stable
+                    {
+                        if (xTaskGetTickCount() - loadManagementDelayStartTick >= LOAD_MANAGEMENT_DELAY)
+                        {
+                            loadState = RED_LEDS_CURRENT;
+                            if (SLIDE_SWITCH_CURRENT == loadState) // All loads have been turned back on for 500 ms
+                            {
+                                currentState = FINISH;
+                            }
+                            else
+                            {
+                                uint8_t skip = (loadState | ~(SLIDE_SWITCH_CURRENT));         // Skip loads that are already on and if the switch is off.
+                                loadNew = (setLeftMostUnsetBit(skip) & SLIDE_SWITCH_CURRENT); // Turn on the highest priority, and mask with switches
+                                outLedItem.ledR = loadNew;                                    // Add to queue
+                                loadChange = loadNew ^ loadState;                             // Which load was turned on
+                                outLedItem.ledG = (GREEN_LEDS_CURRENT & ~(loadChange));       // Turn off the corresponding green led
+                                xQueueSend(qLed, &outLedItem, portMAX_DELAY);
+                                loadManagementDelayStartTick = xTaskGetTickCount();
+                            }
+                        }
+                    }
+                    else // Changed to unstable
+                    {
+                        currentState = DISCONNECT_LOAD;
+                        loadManagementDelayStartTick = xTaskGetTickCount();
+                    }
+                    break;
 
-            default:
-                break;
+                case FINISH:
+                    if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+                    {
+                        currentMode = STABLE;
+                        outInformationItem.informationType = MODE;
+                        outInformationItem.value = currentMode;
+                        xSemaphoreGive(MutexMode);
+                    }
+                    xQueueSend(qInformation, &outInformationItem, portMAX_DELAY);
+                    vTaskResume(SwitchPollingTaskHandle);
+                    vTaskDelete(NULL);
+                    break;
+
+                default:
+                    break;
             }
         }
     }
@@ -330,10 +333,10 @@ void loadManagementTask()
 void switchPollingTask()
 {
     QLedStruct outgoingLedQueueItem;
-    outgoingLedQueueItem.ledg = 0;
+    outgoingLedQueueItem.ledG = 0;
     while (1)
     {
-        outgoingLedQueueItem.ledr = SLIDE_SWITCH_CURRENT; // bit masking to 8 bits
+        outgoingLedQueueItem.ledR = SLIDE_SWITCH_CURRENT;
         xQueueSend(qLed, &outgoingLedQueueItem, pdFALSE);
         vTaskDelay(SWITCH_POLLING_DELAY);
     }
@@ -350,8 +353,8 @@ void ledDriverTask()
     {
         if (xQueueReceive(qLed, &inLedQueueItem, portMAX_DELAY))
         {
-            IOWR(RED_LEDS_BASE, 0, inLedQueueItem.ledr);
-            IOWR(GREEN_LEDS_BASE, 0, inLedQueueItem.ledg);
+            IOWR(RED_LEDS_BASE, 0, inLedQueueItem.ledR);
+            IOWR(GREEN_LEDS_BASE, 0, inLedQueueItem.ledG);
         }
     }
 }
@@ -416,67 +419,67 @@ void keyboardTask()
         {
             switch (state)
             {
-            // Getting a F or a R starts the float construction from chars
-            case IDLE:
-                switch (inKeyboardQueueItem)
-                {
-                case 'F':
-                    printf("Building Frequency\n");
-                    state = BUILDING_FREQ;
+                // Getting a F or a R starts the float construction from chars
+                case IDLE:
+                    switch (inKeyboardQueueItem)
+                    {
+                        case 'F':
+                            printf("Building Frequency\n");
+                            state = BUILDING_FREQ;
+                            break;
+                        case 'R':
+                            printf("Building Rate of Change\n");
+                            state = BUILDING_ROC;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
-                case 'R':
-                    printf("Building Rate of Change\n");
-                    state = BUILDING_ROC;
+
+                // Keeps building freq until done, then send to info task and go back to idle
+                case BUILDING_FREQ:
+                    buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
+                    if (buildStatus == CONSTRUCT_FLOAT_DONE)
+                    {
+                        if (MutexFreq != NULL)
+                        {
+                            if (xSemaphoreTake(MutexFreq, portMAX_DELAY))
+                            {
+                                frequencyThreshold = resultFloat;
+                                xSemaphoreGive(MutexFreq);
+                            }
+                        }
+                        outInformationItem.informationType = FREQ_TRHESH;
+                        outInformationItem.value = frequencyThreshold;
+                        printf("New Freq Threshold: %.4f\n", frequencyThreshold);
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
+                        state = IDLE;
+                    }
+                    break;
+
+                // Keeps building freq until done, then send to info task and go back to idle
+                case BUILDING_ROC:
+                    buildStatus =
+                        constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
+                    if (buildStatus == CONSTRUCT_FLOAT_DONE)
+                    {
+                        if (MutexRoc != NULL)
+                        {
+                            if (xSemaphoreTake(MutexRoc, portMAX_DELAY))
+                            {
+                                rocThreshold = abs(resultFloat);
+                                xSemaphoreGive(MutexRoc);
+                            }
+                        }
+                        outInformationItem.informationType = ROC_THRESH;
+                        outInformationItem.value = rocThreshold;
+                        xQueueSend(qInformation, &outInformationItem, pdFALSE);
+                        printf("New ROC Threshold: %.4f\n", frequencyThreshold);
+                        state = IDLE;
+                    }
                     break;
                 default:
                     break;
-                }
-                break;
-
-            // Keeps building freq until done, then send to info task and go back to idle
-            case BUILDING_FREQ:
-                buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
-                if (buildStatus == CONSTRUCT_FLOAT_DONE)
-                {
-                    if (xMutexFreq != NULL)
-                    {
-                        if (xSemaphoreTake(xMutexFreq, portMAX_DELAY))
-                        {
-                            frequencyThreshold = resultFloat;
-                            xSemaphoreGive(xMutexFreq);
-                        }
-                    }
-                    outInformationItem.informationType = FREQ_TRHESH;
-                    outInformationItem.value = frequencyThreshold;
-                    printf("New Freq Threshold: %.4f\n", frequencyThreshold);
-                    xQueueSend(qInformation, &outInformationItem, pdFALSE);
-                    state = IDLE;
-                }
-                break;
-
-            // Keeps building freq until done, then send to info task and go back to idle
-            case BUILDING_ROC:
-                buildStatus =
-                    constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
-                if (buildStatus == CONSTRUCT_FLOAT_DONE)
-                {
-                    if (xMutexRoc != NULL)
-                    {
-                        if (xSemaphoreTake(xMutexRoc, portMAX_DELAY))
-                        {
-                            rocThreshold = abs(resultFloat);
-                            xSemaphoreGive(xMutexRoc);
-                        }
-                    }
-                    outInformationItem.informationType = ROC_THRESH;
-                    outInformationItem.value = rocThreshold;
-                    xQueueSend(qInformation, &outInformationItem, pdFALSE);
-                    printf("New ROC Threshold: %.4f\n", frequencyThreshold);
-                    state = IDLE;
-                }
-                break;
-            default:
-                break;
             }
         }
     }
@@ -490,9 +493,9 @@ void buttonTask()
     QInformationStruct outgoingInfoItem;
     while (1)
     {
-        if (xSemaphoreTake(xButtonSemaphore, portMAX_DELAY))
+        if (xSemaphoreTake(SemaphoreButton, portMAX_DELAY))
         {
-            if (xSemaphoreTake(xMutexMode, portMAX_DELAY))
+            if (xSemaphoreTake(MutexMode, portMAX_DELAY))
             {
                 if (currentMode == STABLE)
                 {
@@ -503,7 +506,7 @@ void buttonTask()
                     currentMode = STABLE;
                 }
                 outgoingInfoItem.value = currentMode;
-                xSemaphoreGive(xMutexMode);
+                xSemaphoreGive(MutexMode);
             }
             outgoingInfoItem.informationType = MODE;
             xQueueSend(qInformation, &outgoingInfoItem, pdFALSE);
@@ -515,7 +518,7 @@ void createTasks()
 {
     xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
     xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-    xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &vSwitchPollingTaskHandle);
+    xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &SwitchPollingTaskHandle);
     xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
     xTaskCreate(keyboardTask, "keyboardTask", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
     xTaskCreate(buttonTask, "buttonTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);

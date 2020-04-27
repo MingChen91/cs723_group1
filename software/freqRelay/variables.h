@@ -7,6 +7,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
+
 /* Structs */
 typedef struct
 {
@@ -16,8 +17,8 @@ typedef struct
 
 typedef struct
 {
-    uint8_t ledr; // 8 bit of leds
-    uint8_t ledg;
+    uint8_t ledR; // 8 bit of leds
+    uint8_t ledG;
 } QLedStruct;
 
 typedef struct
@@ -56,13 +57,13 @@ QueueHandle_t qInformation;
 QueueHandle_t qKeyBoard;
 QueueHandle_t qViolation;
 
-TaskHandle_t vLoadManagementTaskHandle;
-TaskHandle_t vSwitchPollingTaskHandle;
+TaskHandle_t LoadManagementTaskHandle;
+TaskHandle_t SwitchPollingTaskHandle;
 
-SemaphoreHandle_t xMutexRoc;
-SemaphoreHandle_t xMutexFreq;
-SemaphoreHandle_t xMutexMode;
-SemaphoreHandle_t xButtonSemaphore;
+SemaphoreHandle_t MutexRoc;
+SemaphoreHandle_t MutexFreq;
+SemaphoreHandle_t MutexMode;
+SemaphoreHandle_t SemaphoreButton;
 
 // Globals
 OpMode currentMode;
