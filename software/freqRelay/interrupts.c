@@ -23,9 +23,8 @@
 */
 void buttonIsr()
 {
-    // gives a semaphore for the button task
-    xSemaphoreGiveFromISR(SemaphoreButton, NULL);
-    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7);
+    xSemaphoreGiveFromISR(SemaphoreButton, NULL);           // Gives a semaphore for the button task, used for syncing
+    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7); // Clears edge cap for buttons
 }
 
 /*
@@ -65,7 +64,6 @@ void keyboardIsr(void *ps2Keyboard)
                     xQueueSendFromISR(qKeyBoard, &nullTerminator, NULL);
                 break;
             default:
-                printf(("%x\n", makeCode));
                 break;
         }
     }
@@ -87,13 +85,11 @@ void registerInterrupts()
         return;
     }
 
-    alt_up_ps2_clear_fifo(ps2Keyboard);
-    alt_irq_register(PS2_IRQ, ps2Keyboard, keyboardIsr);
-
-    IOWR_8DIRECT(PS2_BASE, 4, 1); // Writes to RE bit in the control reg of ps2. enables interrupts
-
-    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7); // clear the edge cap reg of buttons
-    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(PUSH_BUTTON_BASE, 0x7); // enable for all buttons
+    alt_up_ps2_clear_fifo(ps2Keyboard);                     // Clear keyboard fifo buffer
+    alt_irq_register(PS2_IRQ, ps2Keyboard, keyboardIsr);    // Register keyboard isr
+    IOWR_8DIRECT(PS2_BASE, 4, 1);                           // Writes to RE bit in the control reg of ps2. enables interrupts
+    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7); // Clear the edge cap reg of buttons
+    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(PUSH_BUTTON_BASE, 0x7); // Enable for all buttons
     alt_irq_register(PUSH_BUTTON_IRQ, NULL, buttonIsr);
     alt_irq_register(FREQUENCY_ANALYSER_IRQ, NULL, freqAdcIsr);
 }

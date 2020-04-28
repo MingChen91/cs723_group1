@@ -3,6 +3,8 @@
 
 #define QUEUE_SIZE_SMALL 20
 #define QUEUE_SIZE_BIG   100
+#define FREQ_INIT        45
+#define ROC_INIT         30
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -19,6 +21,7 @@ typedef struct
 {
     uint8_t ledR; // 8 bit of leds
     uint8_t ledG;
+    uint32_t isrTickCount;
 } QLedStruct;
 
 typedef struct
@@ -59,6 +62,7 @@ QueueHandle_t qViolation;
 
 TaskHandle_t LoadManagementTaskHandle;
 TaskHandle_t SwitchPollingTaskHandle;
+TaskHandle_t initVariablesTaskHandle;
 
 SemaphoreHandle_t MutexRoc;
 SemaphoreHandle_t MutexFreq;

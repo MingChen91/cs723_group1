@@ -14,9 +14,4 @@ void createVariables()
     MutexFreq = xSemaphoreCreateMutex();
     MutexRoc = xSemaphoreCreateMutex();
     MutexMode = xSemaphoreCreateMutex();
-
-    // Global variables
-    currentMode = STABLE;
-    frequencyThreshold = 40;
-    rocThreshold = 30;
 }

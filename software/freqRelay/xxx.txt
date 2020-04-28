@@ -111,3 +111,25 @@ case unshed
         set ledR = previous & not current (turns ones off but not on)
         reset timer
     else if 500 ms 
+
+
+
+
+char text[6] '
+if input != '\0'
+    int 
+    text [index] = 'h'
+    text [index] = 'e'
+    text [index] = 'l'
+    text [index] = 'l'
+    text [index] = 'o'
+text [5] = '\0'
+
+index++ ;
+
+printf("%s",text);
+
+printf("%s," , text);
+
+5, 
+'h' 'e' '\0'
