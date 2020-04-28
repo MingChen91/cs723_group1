@@ -268,6 +268,7 @@ void loadManagementTask()
                     swPosMax = swPosCurrent; // In reconnect mode allow more to go up.
                 }
                 outLedItem.ledR = (swPosMax & loadState);
+                outLedItem.isrTickCount = FROM_SWITCH_POLLING;
                 xQueueSend(qLed, &outLedItem, portMAX_DELAY);
 
                 // Reset the 500 ms count because conditions have changed
