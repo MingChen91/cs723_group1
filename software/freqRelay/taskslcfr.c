@@ -1,9 +1,9 @@
 #include "taskslcfr.h"
 #include "alt_types.h"
 #include "altera_avalon_pio_regs.h"
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <system.h>
 
@@ -51,7 +51,7 @@ void frequencyViolationTask()
             xQueueSend(qInformation, &outInformationItem, pdFALSE);
 
             // Calculated if there's a violation.
-            violationOccured = ((frequencyNew < frequencyThreshold) || (abs(rateOfChange) > rocThreshold));
+            violationOccured = ((frequencyNew < frequencyThreshold) || ((float)(fabs(rateOfChange)) > rocThreshold));
 
             switch (currentMode)
             {
@@ -190,7 +190,6 @@ void informationTask()
     }
     fclose(serialUart);
 }
-
 
 /*
     Uses: Runs when in load management mode, Uses FSM to keep track and balance loads. 
@@ -461,30 +460,29 @@ void keyboardTask()
                         }
                         outInformationItem.informationType = FREQ_TRHESH;
                         outInformationItem.value = frequencyThreshold;
-                        printf("New Freq Threshold: %.4f\n", frequencyThreshold);
                         xQueueSend(qInformation, &outInformationItem, pdFALSE);
+                        printf("New Freq Threshold: %.4f\n", frequencyThreshold);
                         state = IDLE;
                     }
                     break;
 
                 // Keeps building freq until done, then send to info task and go back to idle
                 case BUILDING_ROC:
-                    buildStatus =
-                        constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
+                    buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
                     if (buildStatus == CONSTRUCT_FLOAT_DONE)
                     {
                         if (mutexRoc != NULL)
                         {
                             if (xSemaphoreTake(mutexRoc, portMAX_DELAY))
                             {
-                                rocThreshold = abs(resultFloat);
+                                rocThreshold = (float)(fabs(resultFloat));
                                 xSemaphoreGive(mutexRoc);
                             }
                         }
                         outInformationItem.informationType = ROC_THRESH;
                         outInformationItem.value = rocThreshold;
                         xQueueSend(qInformation, &outInformationItem, pdFALSE);
-                        printf("New ROC Threshold: %.4f\n", frequencyThreshold);
+                        printf("New ROC Threshold: %.4f\n", rocThreshold);
                         state = IDLE;
                     }
                     break;

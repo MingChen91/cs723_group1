@@ -1,6 +1,6 @@
 #include "helpers.h"
 #include <stddef.h>
-
+#include <stdlib.h> // for strtof
 /*
 	Use :
 	Helper function for keeping track of array of rolling numbers
@@ -15,7 +15,6 @@ void shiftReg(int newNumber, int array[])
     }
     array[i] = newNumber;
 }
-
 
 /*
 	Use :
@@ -33,7 +32,7 @@ int setLeftMostUnsetBit(int n)
     {
         if (((n >> (digits - i)) & 1) == 0) // Count from the left, if the digit is 0
         {
-            return (n | (1 << (digits - i))); // set that digit to 1
+            return (n | (1 << (digits - i))); // Set that digit to 1
         }
     }
     return n;
