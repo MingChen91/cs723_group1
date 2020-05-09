@@ -1,10 +1,3 @@
-/*
- * interrupts.c
- *
- *  Created on: 15/04/2020
- *      Author: mingc
- */
-
 #include "interrupts.h"
 #include "altera_avalon_pio_regs.h" // to use PIO functions
 #include "sys/alt_irq.h"            // to register interrupts
@@ -23,7 +16,7 @@
 */
 void buttonIsr()
 {
-    xSemaphoreGiveFromISR(SemaphoreButton, NULL);           // Gives a semaphore for the button task, used for syncing
+    xSemaphoreGiveFromISR(semaphoreButton, NULL);           // Gives a semaphore for the button task, used for syncing
     IOWR_ALTERA_AVALON_PIO_EDGE_CAP(PUSH_BUTTON_BASE, 0x7); // Clears edge cap for buttons
 }
 

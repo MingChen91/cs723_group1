@@ -1,4 +1,4 @@
-obj/default/hello_world.o: hello_world.c interrupts.h freertos/FreeRTOS.h \
+obj/default/main.o: main.c interrupts.h freertos/FreeRTOS.h \
   freertos/FreeRTOSConfig.h ../freqRelay_bsp/system.h \
   ../freqRelay_bsp/linker.h freertos/projdefs.h freertos/portable.h \
   freertos/deprecated_definitions.h freertos/portmacro.h \

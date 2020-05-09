@@ -6,13 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <system.h>
+
 /*
     Use:
     Gets information from frequency relay ISR
     Calculates rate of change, frequency
-
-    Starts Load Management task and sleeps switch polling if a violation has
-   occured.
+    Starts Load Management task and sleeps switch polling if a violation has occured.
 */
 void frequencyViolationTask()
 {
@@ -20,7 +19,7 @@ void frequencyViolationTask()
     QFreqStruct inFreqItem;
     QInformationStruct outInformationItem;
     QViolationStruct outViolationItem;
-    // Local Vars
+    // Local Variabless
     uint16_t sampleCountNew, sampleCountOld;
     uint8_t violationOccured;
     float frequencyNew, frequencyOld, rateOfChange;
@@ -61,17 +60,17 @@ void frequencyViolationTask()
                     if (violationOccured)
                     {
                         // Change the mode and send to information task to display
-                        if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+                        if (xSemaphoreTake(mutexMode, portMAX_DELAY))
                         {
                             currentMode = LOAD_MANAGEMENT;
-                            xSemaphoreGive(MutexMode);
+                            xSemaphoreGive(mutexMode);
                         }
                         outInformationItem.informationType = MODE;
                         outInformationItem.value = currentMode;
                         xQueueSend(qInformation, &outInformationItem, pdFALSE);
                         // Sleep switchPollingTask and start load management task
-                        vTaskSuspend(SwitchPollingTaskHandle);
-                        xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, LoadManagementTaskHandle);
+                        vTaskSuspend(switchPollingTaskHandle);
+                        xTaskCreate(loadManagementTask, "loadManagementTask", configMINIMAL_STACK_SIZE, NULL, 4, loadManagementTaskHandle);
                         // Pass the tickcount from the frequency ISR to
                         // loadManagementTask
                         outViolationItem.isrTickCount = inFreqItem.isrTickCount;
@@ -94,24 +93,22 @@ void frequencyViolationTask()
     }
 }
 
-/* Helper function for keeping track of numbers */
-/* Helper function for keeping track of numbers */
-void shiftReg(int newNumber, int array[])
-{
-    int i;
-    for (i = 0; i < SHIFT_REG_LEN - 1; i++)
-    {
-        array[i] = array[i + 1]; // shift everything along by 1
-    }
-    array[i] = newNumber;
-}
-
 /*
     Use:
     Retrieves information that needs to be displayed from different tasks
-    Keeps track of min, max, and past execution times from isr trigger to load
-   shed. Encodes the information and sends to serial port.
-
+    Keeps track of min, max, and past execution times from isr trigger to load shed. 
+    Encodes the information strng and sends to serial port. 
+    First characters is used to differenentiate the type of message , then the value is followed.
+    Encoding : 
+    Z  = on time
+    f = current frequency
+    r = current rate of change
+    M = current mode 
+    t = execution times
+    Tm = min exec time
+    TM = max exec time
+    R = rate of change threshold
+    F = frequency threshold
 */
 void informationTask()
 {
@@ -120,24 +117,21 @@ void informationTask()
     uint32_t ticktime = 0;
     uint8_t min, sec;
     int execTimes[SHIFT_REG_LEN] = {0};
+    int i; // index counter for execTimes[]
     uint8_t maxExecTime = 0;
     uint8_t minExecTime = 0xff;
-
-    int i;
 
     // Serial UART init
     FILE *serialUart;
     serialUart = fopen("/dev/uart", "w");
-    if (serialUart != NULL)
-    {
-        printf("UART CONNECTED\n\n");
-    }
-    else
+
+    if (serialUart == NULL)
     {
         printf("ERROR CONNECTING TO UART\n");
         return;
     }
 
+    // Loop
     while (1)
     {
         if (xQueueReceive(qInformation, &incomingInformationItem, portMAX_DELAY))
@@ -197,26 +191,14 @@ void informationTask()
     fclose(serialUart);
 }
 
-/* Helper Function to set left most unset bit*/
-int setLeftMostUnsetBit(int n)
-{
-    // Number of digits in binary
-    const uint8_t digits = 7; // 8 LEDs total, 7 bits to shift
-    uint8_t i;
-
-    // Loop through every binary digit
-    for (i = 0; i <= digits; i++)
-    {
-        if (((n >> (digits - i)) & 1) == 0) // Count from the left, if the digit is 0
-        {
-            return (n | (1 << (digits - i))); // set that digit to 1
-        }
-    }
-    return n;
-}
 
 /*
-    Load Management Task
+    Uses: Runs when in load management mode, Uses FSM to keep track and balance loads. 
+    Turns off LSB load every 500 ms if unstable
+    Turns on MSB load every 500 ms if stable
+    Switches between states if not consistent condition for 500ms. 
+    When all loads are connected and turned back on finish this task. 
+    When this task is started switchPollingTask is suspended, this task resumes switchPolling when finished.
 */
 void loadManagementTask()
 {
@@ -246,6 +228,7 @@ void loadManagementTask()
     swPosCurrent = SLIDE_SWITCH_CURRENT;
     outLedItem.ledG = 0;
 
+    // Loop
     while (1)
     {
         if (xQueueReceive(qViolation, &inViolationItem, portMAX_DELAY))
@@ -280,7 +263,6 @@ void loadManagementTask()
             {
                 // Immediately shed one load and go to Shed load state where loads will continue to shed every 500ms if unstable
                 case INIT:
-                    // Shed one load immediately
                     loadState = RED_LEDS_CURRENT;                           // Grab current load status
                     loadNew = (loadState & (loadState - 1));                // Turns off right most set bit (load)
                     outLedItem.ledR = loadNew;                              // Add to queue
@@ -351,16 +333,18 @@ void loadManagementTask()
                     }
                     break;
 
+                // Load management finished. Sent current mode to STABLE , send to information task
+                // Resume switch polling and delete this task.
                 case FINISH:
-                    if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+                    if (xSemaphoreTake(mutexMode, portMAX_DELAY))
                     {
                         currentMode = STABLE;
                         outInformationItem.informationType = MODE;
                         outInformationItem.value = currentMode;
-                        xSemaphoreGive(MutexMode);
+                        xSemaphoreGive(mutexMode);
                     }
                     xQueueSend(qInformation, &outInformationItem, portMAX_DELAY);
-                    vTaskResume(SwitchPollingTaskHandle);
+                    vTaskResume(switchPollingTaskHandle);
                     vTaskDelete(NULL);
                     break;
 
@@ -372,16 +356,16 @@ void loadManagementTask()
 }
 
 /*
-    Polls the switchs every SWITCH_POLLING_DELAY
+    Polls the switchs every SWITCH_POLLING_DELAY (currently 100ms)
     Sends the data to ledDriver task.
 */
-
 void switchPollingTask()
 {
     QLedStruct outgoingLedQueueItem;
     outgoingLedQueueItem.ledG = FROM_SWITCH_POLLING;
     outgoingLedQueueItem.isrTickCount = FROM_SWITCH_POLLING;
 
+    // Loop
     while (1)
     {
         outgoingLedQueueItem.ledR = SLIDE_SWITCH_CURRENT;
@@ -399,6 +383,8 @@ void ledDriverTask()
     QLedStruct inLedQueueItem;
     QInformationStruct outInformationItem;
     uint32_t executionTime;
+
+    // Loop
     while (1)
     {
         if (xQueueReceive(qLed, &inLedQueueItem, portMAX_DELAY))
@@ -417,43 +403,10 @@ void ledDriverTask()
 }
 
 /*
-    Constructs a Float from a stream of chars.
-    Only accept '0'-'9', '.' and null terminator.
-*/
-int8_t constructFloat(float *resultFloat, char inputChar, char *charBuffer)
-{
-    // Static, persist through calls.
-    static uint8_t bufferIndex = 0;
-
-    if (((inputChar < '0') || (inputChar > '9')) && (inputChar != '.') && (inputChar != '\0'))
-        return CONSTRUCT_FLOAT_NOT_DONE;
-
-    charBuffer[bufferIndex] = inputChar;
-
-    // Check if overflowing char buffer
-    if (bufferIndex >= CHAR_BUFFER_SIZE - 1)
-        charBuffer[bufferIndex] = '\0';
-
-    // End of string, convert to float
-    if (charBuffer[bufferIndex] == '\0')
-    {
-        *resultFloat = strtof(charBuffer, NULL);
-        // Reset buffer
-        for (bufferIndex = 0; bufferIndex < CHAR_BUFFER_SIZE; bufferIndex++)
-        {
-            charBuffer[bufferIndex] = '\0';
-        }
-        bufferIndex = 0;
-        return CONSTRUCT_FLOAT_DONE;
-    }
-
-    printf("Buffer : %s\n", charBuffer);
-    bufferIndex++;
-    return CONSTRUCT_FLOAT_NOT_DONE;
-}
-
-/*
-        Taking inputs from the keyboard and changing thresholds
+    Taking inputs from the keyboard and changing thresholds
+    pressing 'f' starts the frequency building process
+    pressing 'r' starts the rate of change building process
+    "enter" finishes the process and converts string to float and sets the respective thresholds
 */
 void keyboardTask()
 {
@@ -498,12 +451,12 @@ void keyboardTask()
                     buildStatus = constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
                     if (buildStatus == CONSTRUCT_FLOAT_DONE)
                     {
-                        if (MutexFreq != NULL)
+                        if (mutexFreq != NULL)
                         {
-                            if (xSemaphoreTake(MutexFreq, portMAX_DELAY))
+                            if (xSemaphoreTake(mutexFreq, portMAX_DELAY))
                             {
                                 frequencyThreshold = resultFloat;
-                                xSemaphoreGive(MutexFreq);
+                                xSemaphoreGive(mutexFreq);
                             }
                         }
                         outInformationItem.informationType = FREQ_TRHESH;
@@ -520,12 +473,12 @@ void keyboardTask()
                         constructFloat(&resultFloat, inKeyboardQueueItem, charBuffer);
                     if (buildStatus == CONSTRUCT_FLOAT_DONE)
                     {
-                        if (MutexRoc != NULL)
+                        if (mutexRoc != NULL)
                         {
-                            if (xSemaphoreTake(MutexRoc, portMAX_DELAY))
+                            if (xSemaphoreTake(mutexRoc, portMAX_DELAY))
                             {
                                 rocThreshold = abs(resultFloat);
-                                xSemaphoreGive(MutexRoc);
+                                xSemaphoreGive(mutexRoc);
                             }
                         }
                         outInformationItem.informationType = ROC_THRESH;
@@ -543,16 +496,16 @@ void keyboardTask()
 }
 
 /*
-    Button to change to maintence mode.
+    Button to change to maintenance mode.
 */
 void buttonTask()
 {
     QInformationStruct outgoingInfoItem;
     while (1)
     {
-        if (xSemaphoreTake(SemaphoreButton, portMAX_DELAY))
+        if (xSemaphoreTake(semaphoreButton, portMAX_DELAY))
         {
-            if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+            if (xSemaphoreTake(mutexMode, portMAX_DELAY))
             {
                 if (currentMode == STABLE)
                 {
@@ -563,7 +516,7 @@ void buttonTask()
                     currentMode = STABLE;
                 }
                 outgoingInfoItem.value = currentMode;
-                xSemaphoreGive(MutexMode);
+                xSemaphoreGive(mutexMode);
             }
             outgoingInfoItem.informationType = MODE;
             xQueueSend(qInformation, &outgoingInfoItem, pdFALSE);
@@ -572,19 +525,18 @@ void buttonTask()
 }
 
 /*
-    Initialise the variables and send to information task to display
-    runs once only
+    Initialise the variables and send to information task to display runs once only
 */
 void initVariablesTask()
 {
     QInformationStruct outInformationItem;
     // Global variables
-    if (xSemaphoreTake(MutexMode, portMAX_DELAY))
+    if (xSemaphoreTake(mutexMode, portMAX_DELAY))
     {
         currentMode = STABLE;
         frequencyThreshold = FREQ_INIT;
         rocThreshold = ROC_INIT;
-        xSemaphoreGive(MutexMode);
+        xSemaphoreGive(mutexMode);
     }
 
     // Send all the information to be displayed on the labview program
@@ -600,14 +552,14 @@ void initVariablesTask()
     outInformationItem.value = rocThreshold;
     xQueueSend(qInformation, &outInformationItem, portMAX_DELAY);
 
-    vTaskDelete(NULL); // end task
+    vTaskDelete(NULL); // End task
 }
 
 void createTasks()
 {
     xTaskCreate(informationTask, "informationTask", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
     xTaskCreate(frequencyViolationTask, "frequencyViolationTask", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-    xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &SwitchPollingTaskHandle);
+    xTaskCreate(switchPollingTask, "switchPollingTask", configMINIMAL_STACK_SIZE, NULL, 4, &switchPollingTaskHandle);
     xTaskCreate(ledDriverTask, "ledDriverTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
     xTaskCreate(keyboardTask, "keyboardTask", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
     xTaskCreate(buttonTask, "buttonTask", configMINIMAL_STACK_SIZE, NULL, 2, NULL);

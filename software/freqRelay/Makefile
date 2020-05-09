@@ -142,7 +142,6 @@ ACDS_VERSION := 13.0
 ELF := freqRelay.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS += hello_world.c
 C_SRCS += freertos/croutine.c
 C_SRCS += freertos/event_groups.c
 C_SRCS += freertos/heap.c
@@ -154,6 +153,8 @@ C_SRCS += freertos/timers.c
 C_SRCS += taskslcfr.c
 C_SRCS += variables.c
 C_SRCS += interrupts.c
+C_SRCS += helpers.c
+C_SRCS += main.c
 CXX_SRCS :=
 ASM_SRCS := freertos/port_asm.S
 

@@ -10,26 +10,7 @@
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 
-/* Structs */
-typedef struct
-{
-    uint16_t adcSampleCount;
-    TickType_t isrTickCount;
-} QFreqStruct;
-
-typedef struct
-{
-    uint8_t ledR; // 8 bit of leds
-    uint8_t ledG;
-    uint32_t isrTickCount;
-} QLedStruct;
-
-typedef struct
-{
-    uint8_t violationOccured;
-    TickType_t isrTickCount;
-} QViolationStruct;
-
+/* Enums */
 typedef enum
 {
     FREQ = 1,
@@ -40,12 +21,6 @@ typedef enum
     FREQ_TRHESH = 6
 } InformationType;
 
-typedef struct
-{
-    InformationType informationType;
-    float value;
-} QInformationStruct;
-
 typedef enum
 {
     STABLE = 1,
@@ -53,23 +28,49 @@ typedef enum
     MAINTANENCE = 3
 } OpMode;
 
-/******** Variables ********/
+/* Structs for queue items */
+typedef struct
+{
+    uint16_t adcSampleCount;
+    TickType_t isrTickCount;
+} QFreqStruct;
+
+typedef struct
+{
+    uint8_t ledR;
+    uint8_t ledG;
+    uint32_t isrTickCount;
+} QLedStruct;
+
+typedef struct
+{
+    uint8_t violationOccured;
+    TickType_t isrTickCount;
+} QViolationStruct;
+
+typedef struct
+{
+    InformationType informationType;
+    float value;
+} QInformationStruct;
+
+/* Handles */
 QueueHandle_t qFreq;
 QueueHandle_t qLed;
 QueueHandle_t qInformation;
 QueueHandle_t qKeyBoard;
 QueueHandle_t qViolation;
 
-TaskHandle_t LoadManagementTaskHandle;
-TaskHandle_t SwitchPollingTaskHandle;
+TaskHandle_t loadManagementTaskHandle;
+TaskHandle_t switchPollingTaskHandle;
 TaskHandle_t initVariablesTaskHandle;
 
-SemaphoreHandle_t MutexRoc;
-SemaphoreHandle_t MutexFreq;
-SemaphoreHandle_t MutexMode;
-SemaphoreHandle_t SemaphoreButton;
+SemaphoreHandle_t mutexRoc;
+SemaphoreHandle_t mutexFreq;
+SemaphoreHandle_t mutexMode;
+SemaphoreHandle_t semaphoreButton;
 
-// Globals
+/* Globals */
 OpMode currentMode;
 float frequencyThreshold, rocThreshold;
 

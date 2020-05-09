@@ -8,10 +8,10 @@ void createVariables()
     qInformation = xQueueCreate(QUEUE_SIZE_BIG, sizeof(QInformationStruct));
     qViolation = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(QViolationStruct));
     qKeyBoard = xQueueCreate(QUEUE_SIZE_SMALL, sizeof(unsigned char));
-    SemaphoreButton = xSemaphoreCreateCounting(5, 0);
+    semaphoreButton = xSemaphoreCreateCounting(5, 0);
 
-    // Mutex lock for Global Vars
-    MutexFreq = xSemaphoreCreateMutex();
-    MutexRoc = xSemaphoreCreateMutex();
-    MutexMode = xSemaphoreCreateMutex();
+    // Mutex lock for Global Variables
+    mutexFreq = xSemaphoreCreateMutex();
+    mutexRoc = xSemaphoreCreateMutex();
+    mutexMode = xSemaphoreCreateMutex();
 }
